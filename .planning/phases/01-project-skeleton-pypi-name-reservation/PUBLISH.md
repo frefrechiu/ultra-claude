@@ -154,3 +154,151 @@ After the first upload succeeds:
 - [ ] You're aware that PyPI versions are immutable: once `0.0.1` is uploaded, you cannot replace it.
 
 When all five boxes are checked, run the upload command from the section above.
+
+---
+
+# Publishing v0.1.0 (the FIRST FUNCTIONAL release)
+
+**Status:** Manual step -- REQUIRES USER ACTION with PyPI credentials. The autonomous portion (`python -m build` + `twine check` + clean-venv smoke install + `pytest --cov` + `ruff check` + `mypy`) was executed by Phase 9 plan 09-04 and PASSED.
+
+**Why this section exists:** Plan 09-04 produced and validated `dist/ultra_claude-0.1.0.tar.gz` and `dist/ultra_claude-0.1.0-py3-none-any.whl`. The 0.0.1 stub above was NEVER uploaded by the user (PKG-05 still pending); the v0.1.0 release supersedes it. A fresh PyPI account upload of `0.1.0` claims the `ultra-claude` distribution name AND ships the functional package in a single step.
+
+**This closes:** PKG-06 (the v0.1.0 PyPI publish requirement). After this upload, `pip install ultra-claude` from any machine returns the real functional package.
+
+## Prerequisites for v0.1.0 upload
+
+Identical to the 0.0.1 prerequisites above. Re-check:
+
+1. PyPI account with 2FA. Same account.
+2. API token. If you generated a token for 0.0.1 and revoked it, generate a new one. Scope: **"Entire account"** (project-scoped tokens cannot exist until the project exists on PyPI -- which is precisely what this upload accomplishes).
+3. `dist/ultra_claude-0.1.0.tar.gz` and `dist/ultra_claude-0.1.0-py3-none-any.whl` exist locally:
+
+   ```bash
+   ls dist/ultra_claude-0.1.0*
+   # Expected:
+   # dist/ultra_claude-0.1.0-py3-none-any.whl
+   # dist/ultra_claude-0.1.0.tar.gz
+   ```
+
+4. Re-validate before uploading:
+
+   ```bash
+   python -m twine check dist/ultra_claude-0.1.0*
+   # Expected: both files report `PASSED`.
+   ```
+
+If either artefact is missing, re-run plan 09-04 Task 1 (`rm -rf dist/ && python -m build`) before continuing.
+
+## Upload command
+
+From the repo root, with `twine` available (it's in the `[dev]` extras from `pyproject.toml`):
+
+### Option A -- Interactive upload
+
+```bash
+python -m twine upload dist/ultra_claude-0.1.0*
+```
+
+twine will prompt:
+- `Enter your username:` -> type `__token__` (literally, with the underscores).
+- `Enter your password:` -> paste the API token (starts with `pypi-`).
+
+### Option B -- Environment-variable upload
+
+```bash
+export TWINE_USERNAME="__token__"
+export TWINE_PASSWORD="pypi-AgEI...your-token-here..."
+python -m twine upload dist/ultra_claude-0.1.0*
+unset TWINE_USERNAME TWINE_PASSWORD
+```
+
+### Option C -- `~/.pypirc` configuration
+
+(See the 0.0.1 section above for the `[pypi]` config format. If you set this up for 0.0.1, no changes needed -- the same config publishes 0.1.0.)
+
+## Expected output
+
+```
+Uploading distributions to https://upload.pypi.org/legacy/
+Uploading ultra_claude-0.1.0-py3-none-any.whl
+100%|...| 9.XXk/9.XXk [00:00<00:00, ...]
+Uploading ultra_claude-0.1.0.tar.gz
+100%|...| 12.XXk/12.XXk [00:00<00:00, ...]
+
+View at:
+https://pypi.org/project/ultra-claude/0.1.0/
+```
+
+Visit the URL and confirm:
+- The project page renders the FULL v0.1.0 README (not the 12-line stub).
+- The Quickstart section is visible at the top.
+- The trademark disclaimer paragraph is present.
+- The MIT license and Python `>=3.10` requirement are shown.
+
+## Verify the v0.1.0 reservation worked
+
+From any other machine (or just a fresh shell):
+
+```bash
+python -m venv .verify-venv
+source .verify-venv/Scripts/activate     # Windows
+# or: source .verify-venv/bin/activate   # POSIX
+pip install --no-cache-dir ultra-claude==0.1.0
+
+# 1. Version cross-check
+python -c "import ultra_claude; print(ultra_claude.__version__)"
+# Expected: 0.1.0
+
+# 2. CLI entry point on PATH
+ultra-claude --version
+# Expected: ultra-claude, version 0.1.0
+
+# 3. Functional smoke (no agent CLIs needed -- --dry-run is offline)
+ultra-claude run --preset debate --inline "test" --dry-run
+# Expected: 9-turn planned schedule with Architect/Critic/Implementer.
+
+deactivate
+rm -rf .verify-venv
+```
+
+If all three smoke checks PASS, ROADMAP success criterion 4 is satisfied: **`pip install ultra-claude` on a fresh machine pulls the real release; `ultra-claude --version` prints `0.1.0`**.
+
+## Post-upload follow-ups
+
+1. **Replace the broad token with a project-scoped one.**
+   - <https://pypi.org/manage/project/ultra-claude/settings/> -> generate project-scoped token.
+   - Replace in your `~/.pypirc` or env vars.
+   - Revoke the original "entire account" token.
+
+2. **Mark requirement PKG-06 as complete** in `.planning/REQUIREMENTS.md` (replace `[ ]` with `[x]`).
+
+3. **Mark requirement PKG-01 as complete** in `.planning/REQUIREMENTS.md` (the user-actionable half: `pip install ultra-claude` from PyPI works on a fresh machine -- the verify step above proves this).
+
+4. **Tag the release**:
+
+   ```bash
+   git tag -a v0.1.0 -m "ultra-claude v0.1.0 -- first functional release"
+   git push origin v0.1.0
+   ```
+
+5. **Update STATE.md** to mark Phase 9 fully closed (after PKG-06 / PKG-01 are checked).
+
+## What can go wrong
+
+The same error table from the 0.0.1 section applies, with one addition specific to v0.1.0:
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| `HTTPError: 400 Bad Request ... File already exists` for `0.1.0` | You already pushed `0.1.0` (PyPI is immutable) | Bump to `0.1.1` (or `0.2.0`) in `src/ultra_claude/__init__.py`, re-build, re-upload. The 0.1.0 release is a one-shot. |
+| `twine upload` for `0.1.0` succeeds but the README on PyPI looks empty | `Description-Content-Type` mismatch | `python -m twine check dist/*` would have caught this -- re-run; then re-build with `rm -rf dist/ && python -m build`. |
+
+## Sanity checklist before running v0.1.0 upload
+
+- [ ] PyPI account exists and has 2FA enabled.
+- [ ] API token generated and copied.
+- [ ] `dist/ultra_claude-0.1.0.tar.gz` and `dist/ultra_claude-0.1.0-py3-none-any.whl` both exist locally (re-check after any clean build).
+- [ ] `python -m twine check dist/ultra_claude-0.1.0*` shows `PASSED` for both.
+- [ ] Plan 09-04's smoke-install + quality gates all PASSED (recorded in `.planning/phases/09-tests-docs-examples-v010-release/09-04-SUMMARY.md`).
+- [ ] You're aware that PyPI versions are immutable: once `0.1.0` is uploaded, you cannot replace it. Bump to 0.1.1 if you need to fix anything post-upload.
+
+When all six boxes are checked, run the upload command from the v0.1.0 section above.
