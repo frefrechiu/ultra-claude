@@ -10,12 +10,17 @@ The public surface is:
   the three adapters bundled with ultra-claude. Marked private (leading
   underscore) because we explicitly do NOT promise API stability for
   third-party adapters; they should implement the Protocol directly.
-* Concrete adapter classes (``ClaudeAdapter`` in plan 04-02; ``GeminiAdapter``
-  and ``CodexAdapter`` in Phase 7).
+* :class:`~ultra_claude.adapters.claude.ClaudeAdapter` -- first concrete
+  adapter, wraps ``claude -p`` (Phase 4).
+* ``GeminiAdapter`` and ``CodexAdapter`` will land in Phase 7, reusing
+  :class:`_SubprocessAdapterMixin` unchanged.
 """
 
 from __future__ import annotations
 
 from .base import Adapter, _SubprocessAdapterMixin
+from .claude import ClaudeAdapter
 
-__all__ = ["Adapter", "_SubprocessAdapterMixin"]
+# Order is intentional (base Protocol + mixin first, then concrete adapters);
+# matches the chronological-by-introduction convention used in exceptions.py.
+__all__ = ["Adapter", "_SubprocessAdapterMixin", "ClaudeAdapter"]  # noqa: RUF022
