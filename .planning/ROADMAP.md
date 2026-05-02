@@ -30,7 +30,10 @@
   2. The repository at HEAD contains `pyproject.toml` (hatchling backend, click/pydantic v2/pyyaml dependencies pinned), `LICENSE` (MIT) at root, and a `.gitignore` covering Python build artifacts and editor files
   3. `python -c "import ultra_claude; print(ultra_claude.__version__)"` prints `0.0.1` and the printed string equals the `[project] version` value in `pyproject.toml`
   4. `pip install -e ".[dev]"` in a clean virtualenv succeeds without errors
-**Plans**: TBD
+**Plans:** 3 plans
+- [ ] 01-01-PLAN.md — Repository skeleton (LICENSE, .gitignore, README, CHANGELOG, src/ultra_claude/__init__.py with __version__)
+- [ ] 01-02-PLAN.md — pyproject.toml with hatchling backend, pinned runtime/dev deps, dynamic version, src layout, ruff/mypy/pytest tool config
+- [ ] 01-03-PLAN.md — Build sdist+wheel, clean-venv smoke test, PUBLISH.md runbook + manual `twine upload` checkpoint (autonomous: false)
 **UI hint**: no
 
 ### Phase 2: Config Schema & YAML Loader
@@ -167,7 +170,7 @@ Phases 1, 8, and 9 are strict serialization points — they cannot run in parall
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Skeleton & PyPI Name Reservation | 0/0 | Not started | - |
+| 1. Project Skeleton & PyPI Name Reservation | 0/3 | Planned | - |
 | 2. Config Schema & YAML Loader | 0/0 | Not started | - |
 | 3. Transcript Module | 0/0 | Not started | - |
 | 4. Adapter Protocol & ClaudeAdapter | 0/0 | Not started | - |
@@ -197,4 +200,4 @@ All 58 v1 requirements mapped to exactly one phase. No orphans, no duplicates.
 
 ---
 *Roadmap created: 2026-05-02 from PROJECT.md + REQUIREMENTS.md + research/*
-*Last updated: 2026-05-02 after initialization*
+*Last updated: 2026-05-02 after Phase 1 plan decomposition (3 plans, 2 waves)*
