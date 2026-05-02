@@ -19,11 +19,11 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 
 ### Config Schema & Loader
 
-- [ ] **CFG-01**: User can author a `ultra-claude.yaml` file with `agents`, `max_turns`, `stop_keywords`, and `transcript_path` fields and have it validated by Pydantic v2
-- [ ] **CFG-02**: Each agent in config has `name`, `role`, `adapter` (literal: `claude` | `gemini` | `codex`), and `system_prompt` fields, all required
-- [ ] **CFG-03**: Invalid YAML or invalid config produces a human-readable error pointing at the offending field (Pydantic's structured error output)
-- [ ] **CFG-04**: `turn_order` field accepts only `round_robin` in v1 (Literal type); `max_turns` defaults to 12 when omitted
-- [ ] **CFG-05**: `stop_keywords` defaults to `["AGREED", "DONE"]` when omitted
+- [x] **CFG-01**: User can author a `ultra-claude.yaml` file with `agents`, `max_turns`, `stop_keywords`, and `transcript_path` fields and have it validated by Pydantic v2
+- [x] **CFG-02**: Each agent in config has `name`, `role`, `adapter` (literal: `claude` | `gemini` | `codex`), and `system_prompt` fields, all required
+- [x] **CFG-03**: Invalid YAML or invalid config produces a human-readable error pointing at the offending field (Pydantic's structured error output)
+- [x] **CFG-04**: `turn_order` field accepts only `round_robin` in v1 (Literal type); `max_turns` defaults to 12 when omitted
+- [x] **CFG-05**: `stop_keywords` defaults to `["AGREED", "DONE"]` when omitted
 
 ### Transcript
 
@@ -172,11 +172,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PKG-05 | Phase 1 | Pending (artifacts + runbook ready in plan 01-03; awaits user `twine upload`) |
 | PKG-06 | Phase 9 | Pending |
 | PKG-07 | Phase 1 | Complete (plan 01-01 export commit 2b15b36 + plan 01-02 dynamic wiring commit b9bf3c5); runtime cross-check in plan 01-03 |
-| CFG-01 | Phase 2 | Pending |
-| CFG-02 | Phase 2 | Pending |
-| CFG-03 | Phase 2 | Partial (foundation in plan 02-01 commit ddfca71 — `ConfigError` class exists; full human-readable formatting lands in plan 02-02 via `format_validation_error` + `load_config` catch path) |
-| CFG-04 | Phase 2 | Pending |
-| CFG-05 | Phase 2 | Pending |
+| CFG-01 | Phase 2 | Complete (plan 02-02 commits e97325a + 5c272f0 — `RoundtableConfig.from_yaml_string` + `load_config` parse valid YAML into typed `RoundtableConfig`; verified by `test_valid_yaml_parses_into_typed_config`) |
+| CFG-02 | Phase 2 | Complete (plan 02-02 commits e97325a + 5c272f0 — `AgentConfig` requires `name`/`role`/`adapter` Literal/`system_prompt` with `min_length=1`; verified by `test_missing_agent_field_names_offending_field_path` + `test_invalid_adapter_literal_is_rejected_with_field_path`) |
+| CFG-03 | Phase 2 | Complete (plan 02-01 commit ddfca71 + plan 02-02 commits e97325a + 5c272f0 — `ConfigError` wraps `yaml.YAMLError`/`pydantic.ValidationError`/`FileNotFoundError`; `format_validation_error` produces field-path-named lines; verified by `test_malformed_yaml_produces_human_readable_error` + `test_format_validation_error_produces_field_path_per_line`) |
+| CFG-04 | Phase 2 | Complete (plan 02-02 commits e97325a + 5c272f0 — `turn_order: Literal['round_robin']` default `'round_robin'`; `max_turns: int = 12, ge=2`; verified by `test_non_round_robin_turn_order_is_rejected` + `test_defaults_for_max_turns_and_stop_keywords`) |
+| CFG-05 | Phase 2 | Complete (plan 02-02 commits e97325a + 5c272f0 — `stop_keywords: list[str] = default_factory=lambda: ['AGREED', 'DONE']`; verified by `test_defaults_for_max_turns_and_stop_keywords`) |
 | TRX-01 | Phase 3 | Pending |
 | TRX-02 | Phase 3 | Pending |
 | TRX-03 | Phase 3 | Pending |
@@ -246,4 +246,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after plan 02-01 autonomous completion (CFG-03 partial — `ConfigError` exception class landed in `src/ultra_claude/exceptions.py` via commit ddfca71; full human-readable formatting lands in plan 02-02)*
+*Last updated: 2026-05-02 after plan 02-02 autonomous completion (CFG-01, CFG-02, CFG-03, CFG-04, CFG-05 all COMPLETE — `src/ultra_claude/config.py` schema + `load_config` + `format_validation_error` + 8-test pytest suite landed via commits e97325a + 5c272f0; Phase 2 closes)*

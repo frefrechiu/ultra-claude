@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v0.1.0
 milestone_name: Release
-status: phase-2-plan-01-complete-config-error-class-landed
-last_updated: "2026-05-02T02:30:33Z"
+status: phase-2-complete-config-schema-and-yaml-loader-landed
+last_updated: "2026-05-02T02:39:52Z"
 progress:
   total_phases: 9
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 5
-  completed_plans: 4
-  percent: 44
+  completed_plans: 5
+  percent: 56
 ---
 
 # State: ultra-claude
@@ -20,21 +20,21 @@ progress:
 
 **Core Value:** A user can run `ultra-claude run task.md` and get three CLI agents debating their problem in a transcript file — using only their existing CLI logins, no API keys.
 
-**Current Focus:** Phase 2 underway. Plan 02-01 COMPLETE — `ConfigError` exception class landed in `src/ultra_claude/exceptions.py` (commit `ddfca71`). Phase 1 autonomous portion still complete; PKG-05 still pending user `twine upload` (independent of Phase 2 progress). Plan 02-02 (config.py + tests) is now unblocked.
+**Current Focus:** Phase 2 COMPLETE. Plan 02-02 closed CFG-01..CFG-05 — `src/ultra_claude/config.py` (schema + `load_config` + `format_validation_error`) + `tests/__init__.py` + `tests/test_config.py` (8 tests, 8 PASS) landed via commits `e97325a` + `5c272f0`. Phase 1 autonomous portion still complete; PKG-05 still pending user `twine upload` (independent of Phase 2 progress). Phase 3 (Transcript Module) is now unblocked.
 
 ## Current Position
 
-Phase: 02-config-schema-yaml-loader — IN PROGRESS (1/2 plans complete)
-Plan: 02-01 COMPLETE; 02-02 NEXT
+Phase: 02-config-schema-yaml-loader — COMPLETE (2/2 plans, all 5 CFG requirements closed)
+Next phase: 03-transcript-module (depends on Phase 2; can begin)
 | Field | Value |
 |-------|-------|
-| Phase | 2 (Config Schema & YAML Loader) |
-| Plan | 02-01 COMPLETE (ConfigError class); 02-02 NEXT (config.py + load_config + tests) |
-| Status | Exception class landed; importable as `from ultra_claude.exceptions import ConfigError`; zero third-party imports; LF-only on disk; all 6 verification commands PASS |
-| Progress | 0/9 phases complete; 4/5 plans (Phase 1: 3/3, Phase 2: 1/2) |
+| Phase | 2 (Config Schema & YAML Loader) — COMPLETE |
+| Plan | 02-01 + 02-02 both COMPLETE; Phase 3 NEXT |
+| Status | All 5 CFG requirements complete; `from ultra_claude.config import RoundtableConfig, AgentConfig, load_config, format_validation_error, ConfigError` works; 8/8 tests pass; LF-only on disk; all 9 plan-level verification commands PASS |
+| Progress | 1/9 phases complete; 5/5 plans (Phase 1: 3/3, Phase 2: 2/2) |
 
 ```
-[####                ] 4/9 plans (44%) — Phase 2 plan 01 of 02 done
+[#####               ] 5/9 plans (56%) — Phase 2 complete; Phase 3 next
 ```
 
 ## Performance Metrics
@@ -42,17 +42,18 @@ Plan: 02-01 COMPLETE; 02-02 NEXT
 | Metric | Value |
 |--------|-------|
 | Phases planned | 9 |
-| Phases complete | 0 (Phase 1 awaiting user twine upload to fully close PKG-05; Phase 2 in progress) |
-| Plans complete | 4 (Phase 1: 3/3, Phase 2: 1/2) |
+| Phases complete | 1 (Phase 2 fully closed; Phase 1 awaiting user twine upload to fully close PKG-05) |
+| Plans complete | 5 (Phase 1: 3/3, Phase 2: 2/2) |
 | v1 requirements mapped | 58/58 |
-| Requirements completed | 4 (PKG-02, PKG-03, PKG-04, PKG-07) |
-| Requirements partial | 1 (CFG-03 — `ConfigError` class landed in 02-01; full delivery in 02-02) |
+| Requirements completed | 9 (PKG-02, PKG-03, PKG-04, PKG-07, CFG-01, CFG-02, CFG-03, CFG-04, CFG-05) |
+| Requirements partial | 0 |
 | Requirements deferred-to-user | 1 (PKG-05 — twine upload, runbook ready) |
 | Coverage | 100% |
 | Plan 01-01 duration | ~2 min (2026-05-02T01:48:41Z → 2026-05-02T01:50:25Z) |
 | Plan 01-02 duration | ~1.5 min (2026-05-02T01:54:42Z → 2026-05-02T01:56:12Z) |
 | Plan 01-03 duration | ~5 min (2026-05-02T02:00:57Z → 2026-05-02T02:06:15Z) — autonomous portion |
 | Plan 02-01 duration | ~2 min (2026-05-02T02:28:34Z → 2026-05-02T02:30:33Z) |
+| Plan 02-02 duration | ~4 min (2026-05-02T02:35:56Z → 2026-05-02T02:39:52Z) |
 
 ## Accumulated Context
 
@@ -81,10 +82,10 @@ Plan: 02-01 COMPLETE; 02-02 NEXT
 - [x] **Plan 01-02 (pyproject.toml + tool configs):** PEP 621 metadata + hatchling >= 1.29 backend, dynamic version via `[tool.hatch.version] path = "src/ultra_claude/__init__.py"`, runtime deps pinned (click >= 8.3.3, pydantic >= 2.13.3, pyyaml >= 6.0.3), dev deps pinned (ruff >= 0.13, mypy >= 1.18, pytest >= 8.4 + auxiliaries), `[tool.hatch.build.targets.wheel] packages = ["src/ultra_claude"]` for src layout, ruff/mypy/pytest tool tables. NO `[project.scripts]` (CLI deferred to Phase 8). Commit: `b9bf3c5`. Requirements: PKG-02, PKG-07 (fully complete).
 - [x] **Plan 01-03 (build + smoke test + PUBLISH.md):** Built `dist/ultra_claude-0.0.1.tar.gz` and `dist/ultra_claude-0.0.1-py3-none-any.whl` via `python -m build`; both pass `twine check`. Clean-venv smoke test verified `__version__ == importlib.metadata.version('ultra-claude') == "0.0.1"` (triple alignment) with `pip install -e ".[dev]"` succeeding in `.smoke-venv` (resolved click 8.3.3, pydantic 2.13.3, pyyaml 6.0.3, ruff 0.15.12, mypy 1.20.2, pytest 9.0.3, all dev tools callable). PUBLISH.md operator runbook authored (`e96ccb6`); `.smoke-venv/` added to .gitignore as defensive Rule 3 deviation (`3e31832`). Task 4 (twine upload) deferred to user action per orchestrator instruction. Commits: `3e31832`, `e96ccb6`. Requirements: PKG-05 staged-but-pending-user-action.
 
-### In-Phase-2 Progress
+### Phase 2 Progress (COMPLETE)
 
-- [x] **Plan 02-01 (`ConfigError` exception class):** New file `src/ultra_claude/exceptions.py` (1387 bytes, 34 lines, LF-only, ASCII-only). Defines `class ConfigError(Exception)` with a docstring documenting the three failure modes it wraps (`yaml.YAMLError`, `pydantic.ValidationError`, `FileNotFoundError`). Module docstring foreshadows Phase 4 `AdapterError`/`AdapterAuthError` additions. `__all__ = ["ConfigError"]` declared. Zero third-party imports — verified via `dir(module)` scan returning no `pydantic`/`yaml` symbols (clean-OK). `from __future__ import annotations` present defensively. All 6 plan-level verification commands PASS (parse, import, behavior, __all__, LF-only, no third-party leakage). Commit: `ddfca71`. Requirements: CFG-03 partial (foundation; full delivery in 02-02 via `format_validation_error` + `load_config`).
-- [ ] **Plan 02-02 (`config.py` + tests):** NEXT. Will land `AgentConfig`, `RoundtableConfig`, `load_config(path) -> RoundtableConfig`, and `format_validation_error(err, source_path) -> str` with `tests/test_config.py` covering 6 cases per CONTEXT.md. Closes CFG-01..CFG-05.
+- [x] **Plan 02-01 (`ConfigError` exception class):** New file `src/ultra_claude/exceptions.py` (1387 bytes, 34 lines, LF-only, ASCII-only). Defines `class ConfigError(Exception)` with a docstring documenting the three failure modes it wraps (`yaml.YAMLError`, `pydantic.ValidationError`, `FileNotFoundError`). Module docstring foreshadows Phase 4 `AdapterError`/`AdapterAuthError` additions. `__all__ = ["ConfigError"]` declared. Zero third-party imports. Commit: `ddfca71`. Requirements: CFG-03 partial (foundation completed by 02-02).
+- [x] **Plan 02-02 (`config.py` + tests):** New file `src/ultra_claude/config.py` (9714 bytes, 267 lines, LF-only, ASCII-only) defining `AgentConfig` (Literal['claude','gemini','codex'] adapter, all required, min_length=1), `RoundtableConfig` (agents min_length=2, max_turns default 12 ge=2, stop_keywords default ['AGREED','DONE'], turn_order Literal['round_robin'], abort_on_error False, transcript_path optional, task optional), `load_config(path) -> RoundtableConfig`, `RoundtableConfig.from_yaml_string` classmethod, `format_validation_error(err, source_path) -> str` with specialised `literal_error`/`missing` wording, `_format_loc` ('agents', 0, 'adapter') -> 'agents[0].adapter', `_format_yaml_error` 1-indexed line/column. Both `BaseModel`s use `ConfigDict(extra='forbid')`. `__all__` exports 5 public symbols. Plus `tests/__init__.py` (0 bytes, package marker) and `tests/test_config.py` (8763 bytes, 276 lines, 8 test functions). All 8 tests pass; all 9 plan-level verification commands PASS. One Rule 3 deviation: ran `pip install -e ".[dev]"` (acknowledged in plan note) to make `ultra_claude` importable for pytest collection — no working-tree changes. Commits: `e97325a` (feat: add config schema and YAML loader), `5c272f0` (test: add config validation test suite). Requirements: CFG-01..CFG-05 all COMPLETE.
 
 ### Out-of-Scope Discoveries Logged (not actioned in 02-01)
 
@@ -105,23 +106,26 @@ None for autonomous execution. Phase 1 final closure (PKG-05) gates on a one-ste
 
 ## Session Continuity
 
-**Last action:** Executed Phase 2 plan 02-01 (`ConfigError` exception class). Created `src/ultra_claude/exceptions.py` (1387 bytes, 34 lines, LF-only, ASCII-only) with `class ConfigError(Exception)`, module docstring foreshadowing Phase 4 `AdapterError`/`AdapterAuthError` additions, `__all__ = ["ConfigError"]`, and `from __future__ import annotations`. Zero third-party imports — verified `dir(module)` contains no `pydantic`/`yaml` symbols (clean-OK). All 6 plan-level verification commands pass post-commit (parse-OK, import-OK, behavior-OK, all-OK, LF-OK, clean-OK). Atomic commit: `ddfca71` (`feat(02-01): add ConfigError exception class`). SUMMARY at `.planning/phases/02-config-schema-yaml-loader/02-01-SUMMARY.md`. Out-of-scope discovery (autocrlf risk on Windows checkout) logged to `.planning/phases/02-config-schema-yaml-loader/deferred-items.md`.
+**Last action:** Executed Phase 2 plan 02-02 (config schema + YAML loader + tests). Created `src/ultra_claude/config.py` (9714 bytes, 267 lines, LF-only, ASCII-only) with `AgentConfig`, `RoundtableConfig`, `load_config(path) -> RoundtableConfig`, `RoundtableConfig.from_yaml_string` classmethod, `format_validation_error(err, source_path) -> str` with specialised `literal_error`/`missing` wording, `_format_loc` and `_format_yaml_error` helpers, `__all__` exporting 5 public symbols. Both Pydantic models use `ConfigDict(extra='forbid')`. Created `tests/__init__.py` (0 bytes, package marker) and `tests/test_config.py` (8763 bytes, 276 lines, 8 test functions covering CFG-01..CFG-05 plus wire-format check and file-not-found path). `python -m pytest tests/test_config.py -v` shows 8/8 PASSED in 0.11s. All 9 plan-level verification commands PASS (full suite, CFG references, public API, ConfigError identity, defaults, turn_order rejection, error isolation, LF-only, parse). Verified ConfigError-from-config and ConfigError-from-exceptions are the SAME class object (no shadowing). Verified ValidationError + yaml.YAMLError never leak to the caller (3-layer assertion). Atomic commits: `e97325a` (feat: add config schema and YAML loader) + `5c272f0` (test: add config validation test suite). One Rule 3 deviation: ran `pip install -e ".[dev]" --quiet` to make `ultra_claude` importable for pytest collection (plan acknowledged this in note; no working-tree changes). SUMMARY at `.planning/phases/02-config-schema-yaml-loader/02-02-SUMMARY.md`. Phase 2 fully CLOSED.
 
-**Next action:** Execute Phase 2 plan 02-02 (`config.py` + tests). Will import `ConfigError` from this plan's `exceptions.py` (key-link verified — `from .exceptions import ConfigError` from `config.py`). Plan 02-02 lands `AgentConfig`, `RoundtableConfig`, `load_config(path) -> RoundtableConfig`, `format_validation_error(err, source_path) -> str`, plus `tests/test_config.py` covering the 6 cases listed in CONTEXT.md (CFG-01..CFG-05). After 02-02, Phase 2 closes; Phase 3 (Transcript Module) is ready to begin.
+**Next action:** Phase 3 (Transcript Module) is unblocked and ready to begin. Phase 3 will land `src/ultra_claude/transcript.py` with the append-as-you-go markdown writer using non-markdown HTML-comment sentinels (per Pitfall #8 to avoid markdown-in-markdown corruption) plus a JSONL sidecar. Phase 3 imports `AgentConfig` from `ultra_claude.config` (now available). Phase 3 covers TRX-01..TRX-05. Run `/gsd-plan-phase 3` (or `/gsd-discuss-phase 3` to clarify approach first) to decompose Phase 3 into executable plans.
 
 **Files in scope:**
 
 - `.planning/PROJECT.md` — core value, constraints, key decisions
-- `.planning/REQUIREMENTS.md` — 58 v1 requirements mapped 100% to phases (4 complete, 1 partial via 02-01, 1 deferred-to-user)
+- `.planning/REQUIREMENTS.md` — 58 v1 requirements mapped 100% to phases (9 complete, 1 deferred-to-user)
 - `.planning/ROADMAP.md` — 9-phase structure with goal-backward success criteria
 - `.planning/STATE.md` — this file
 - `.planning/phases/01-project-skeleton-pypi-name-reservation/PUBLISH.md` — operator runbook for the deferred user action (PKG-05)
 - `.planning/phases/02-config-schema-yaml-loader/02-01-PLAN.md` — completed plan
 - `.planning/phases/02-config-schema-yaml-loader/02-01-SUMMARY.md` — completion summary for 02-01
-- `.planning/phases/02-config-schema-yaml-loader/02-02-PLAN.md` — next plan (config.py + tests)
+- `.planning/phases/02-config-schema-yaml-loader/02-02-PLAN.md` — completed plan
+- `.planning/phases/02-config-schema-yaml-loader/02-02-SUMMARY.md` — completion summary for 02-02 (this plan)
 - `.planning/phases/02-config-schema-yaml-loader/02-CONTEXT.md` — phase context (decisions, code insights, specifics)
 - `.planning/phases/02-config-schema-yaml-loader/deferred-items.md` — out-of-scope discoveries (autocrlf on Windows)
-- `src/ultra_claude/exceptions.py` — newly landed in this plan, consumed by 02-02
+- `src/ultra_claude/exceptions.py` — landed in plan 02-01, consumed by 02-02
+- `src/ultra_claude/config.py` — newly landed in plan 02-02, consumed by Phase 3+ (RoundtableConfig + AgentConfig)
+- `tests/__init__.py` and `tests/test_config.py` — newly landed in plan 02-02 (8 tests, all PASS)
 - `.planning/research/{SUMMARY,STACK,ARCHITECTURE,PITFALLS,FEATURES}.md` — context for plan-time research-flagged phases
 
 ---
@@ -130,3 +134,4 @@ None for autonomous execution. Phase 1 final closure (PKG-05) gates on a one-ste
 *Plan 01-02 completed: 2026-05-02 — commit b9bf3c5 (feat: pyproject.toml with hatchling backend, pinned deps, tool config)*
 *Plan 01-03 completed: 2026-05-02 — commits 3e31832 (chore: .gitignore .smoke-venv defensive add) + e96ccb6 (docs: PUBLISH.md runbook); dist/ artifacts produced and smoke-tested locally; PKG-05 deferred to user action*
 *Plan 02-01 completed: 2026-05-02 — commit ddfca71 (feat: add ConfigError exception class); CFG-03 partial (foundation; full delivery in 02-02)*
+*Plan 02-02 completed: 2026-05-02 — commits e97325a (feat: add config schema and YAML loader) + 5c272f0 (test: add config validation test suite); CFG-01..CFG-05 all COMPLETE; 8/8 tests PASS; Phase 2 fully CLOSED*
