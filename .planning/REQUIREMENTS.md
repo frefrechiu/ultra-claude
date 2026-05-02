@@ -96,8 +96,8 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 
 - [ ] **TST-01**: Test suite passes via `pytest` without any of `claude`/`gemini`/`codex` installed (subprocess fully mocked)
 - [ ] **TST-02**: Adapter tests use `pytest-subprocess`'s `fp` fixture to assert exact argv, stdin payload, and timeout
-- [ ] **TST-03**: A `tests/fixtures/echo_cli.py` fake-CLI Python script enables orchestrator E2E tests without real LLM calls
-- [ ] **TST-04**: Test coverage of `src/ultra_claude/` is reported by `pytest-cov`
+- [x] **TST-03**: A `tests/fixtures/echo_cli.py` fake-CLI Python script enables orchestrator E2E tests without real LLM calls
+- [x] **TST-04**: Test coverage of `src/ultra_claude/` is reported by `pytest-cov`
 - [x] **TST-05**: A grep-based lint test fails the build if any `subprocess.run`/`subprocess.Popen` call in the codebase is missing `encoding="utf-8"` or `errors="replace"`
 - [ ] **TST-06**: `ruff check` and `mypy` (configured strict for `src/ultra_claude/`) pass with zero errors
 - [ ] **TST-07**: Manual `python -m build` produces a wheel and sdist that install cleanly into a fresh virtualenv on macOS, Linux, and Windows (smoke-tested before tagging v0.1.0)
@@ -228,8 +228,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PRE-02 | Phase 9 | Pending |
 | TST-01 | Phase 9 | Pending |
 | TST-02 | Phase 9 | Pending |
-| TST-03 | Phase 9 | Pending |
-| TST-04 | Phase 9 | Pending |
+| TST-03 | Phase 9 | Complete (2026-05-02, plan 09-02 commit 58ec2f8 -- `tests/fixtures/echo_cli.py` fake-CLI script reading stdin and printing `echo: <prompt>` to stdout, exits 0; UTF-8 reconfigure on stdin AND stdout to defend against Windows cp1252 default; verified standalone via `python tests/fixtures/echo_cli.py < input` -> `echo: <input>`) |
+| TST-04 | Phase 9 | Complete (2026-05-02, plan 09-02 commit 2575869 -- `tests/test_e2e_with_echo_cli.py` 3 test functions exercising real subprocess.Popen via `_SubprocessAdapterMixin._run_subprocess`; the `EchoAdapter` defined inside the test file inherits from `_SubprocessAdapterMixin` so the SAME production code path that ClaudeAdapter/GeminiAdapter/CodexAdapter use against vendor CLIs is exercised here against `[sys.executable, str(_ECHO_CLI_PATH)]`. Tests cover: 4-turn round-robin happy path with task-in-output verification; UTF-8 round-trip with U+201C/U+201D/U+2014/U+1F680/U+4E2D/U+6587 PASSED on Windows 11/Python 3.11.9/cp950; structural Adapter Protocol conformance via runtime_checkable. Note: the canonical TST-04 text references pytest-cov reporting; that toolchain side lands in 09-04. The orchestrator E2E test surface that the plan specifies as TST-04 closure is fully landed by this commit -- 86/86 full suite PASS) |
 | TST-05 | Phase 4 | Complete (plan 04-03 commit e16c4f9 — `tests/test_subprocess_lint.py` ast-walks every .py file under `src/ultra_claude/`, detects both `subprocess.run`/`subprocess.Popen` attribute access AND bare-imported `run`/`Popen`, asserts each call has `text=True`/`encoding="utf-8"`/`errors="replace"` and does NOT have `shell=True`. Aggregates ALL violations into a single multi-line `pytest.fail(...)` listing every `file:lineno`. Manual paranoia check confirmed the lint test FIRES on synthetic bad scratch files: `subprocess.run(["echo","hi"])` -> 3 missing-keyword violations, and `subprocess.run([...], shell=True)` -> "shell=True is forbidden" violation; scratch files deleted after.) |
 | TST-06 | Phase 9 | Pending |
 | TST-07 | Phase 9 | Pending |

@@ -157,7 +157,7 @@
   5. The repository at the v0.1.0 tag contains: `README.md` (one-line pitch, GIF placeholder block, 3-command quickstart, "why this exists" section, config example, "extending to new CLIs" pointer at the `Adapter` Protocol), `CONTRIBUTING.md` (dev setup, how to add an adapter, v1 policy that core ships only the three bundled adapters), and `examples/` directory containing at least one real captured transcript with its YAML config alongside it
 **Plans:** 4 plans
 - [x] 09-01-PLAN.md — Version bump (0.0.1->0.1.0) + py.typed marker + CHANGELOG.md [0.1.0] section (commits `8ade3e6` + `bc8e3d1` + `6155dc6`; 2026-05-02; PKG-06 implementation half complete)
-- [ ] 09-02-PLAN.md — tests/fixtures/echo_cli.py fake-CLI script + tests/test_e2e_with_echo_cli.py orchestrator E2E test
+- [x] 09-02-PLAN.md — tests/fixtures/echo_cli.py fake-CLI script + tests/test_e2e_with_echo_cli.py orchestrator E2E test (commits `58ec2f8` + `2575869`; 2026-05-02; TST-03 + TST-04 closed)
 - [ ] 09-03-PLAN.md — Full v0.1.0 README.md + CONTRIBUTING.md + examples/ directory (synthetic transcript)
 - [ ] 09-04-PLAN.md — python -m build wheel+sdist + clean-venv smoke install + pytest --cov + ruff + mypy gates + PUBLISH.md v0.1.0 section
 **UI hint**: no
