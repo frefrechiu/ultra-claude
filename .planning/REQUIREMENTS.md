@@ -63,17 +63,28 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 
 ### CLI
 
-- [ ] **CLI-01**: `ultra-claude --version` prints `__version__` and exits 0
-- [ ] **CLI-02**: `ultra-claude --help` prints click-generated help and exits 0
-- [ ] **CLI-03**: `ultra-claude run <task-file>` reads the task, loads `./ultra-claude.yaml`, runs the orchestrator, and prints the transcript path on stdout
-- [ ] **CLI-04**: `ultra-claude run --config <path>` overrides the default config location
-- [ ] **CLI-05**: `ultra-claude run --preset <name>` loads a bundled preset (e.g. `--preset debate`) instead of a user config file
-- [ ] **CLI-06**: `ultra-claude run --inline "<task>"` accepts the task as a string instead of a file path
-- [ ] **CLI-07**: `ultra-claude run --dry-run` validates config + prints planned turn order without invoking any adapter
-- [ ] **CLI-08**: `ultra-claude run --output <path>` overrides the transcript output path
-- [ ] **CLI-09**: `ultra-claude doctor` checks for `claude`/`gemini`/`codex` on PATH, probes login state for each, and prints a per-CLI status table (PASS / FAIL / UNKNOWN)
-- [ ] **CLI-10**: Exit codes follow Unix convention: `0` success, `1` runtime error, `2` config validation error
-- [ ] **CLI-11**: Live progress (e.g. "Claude is thinking…") renders to stderr only when stdout is a TTY; suppressed when piped or redirected
+- [x] **CLI-01
+**: `ultra-claude --version` prints `__version__` and exits 0
+- [x] **CLI-02
+**: `ultra-claude --help` prints click-generated help and exits 0
+- [x] **CLI-03
+**: `ultra-claude run <task-file>` reads the task, loads `./ultra-claude.yaml`, runs the orchestrator, and prints the transcript path on stdout
+- [x] **CLI-04
+**: `ultra-claude run --config <path>` overrides the default config location
+- [x] **CLI-05
+**: `ultra-claude run --preset <name>` loads a bundled preset (e.g. `--preset debate`) instead of a user config file
+- [x] **CLI-06
+**: `ultra-claude run --inline "<task>"` accepts the task as a string instead of a file path
+- [x] **CLI-07
+**: `ultra-claude run --dry-run` validates config + prints planned turn order without invoking any adapter
+- [x] **CLI-08
+**: `ultra-claude run --output <path>` overrides the transcript output path
+- [x] **CLI-09
+**: `ultra-claude doctor` checks for `claude`/`gemini`/`codex` on PATH, probes login state for each, and prints a per-CLI status table (PASS / FAIL / UNKNOWN)
+- [x] **CLI-10
+**: Exit codes follow Unix convention: `0` success, `1` runtime error, `2` config validation error
+- [x] **CLI-11
+**: Live progress (e.g. "Claude is thinking…") renders to stderr only when stdout is a TTY; suppressed when piped or redirected
 
 ### Presets & Examples
 
