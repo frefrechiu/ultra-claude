@@ -39,7 +39,7 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 - [x] **ADP-02**: Internal `_SubprocessAdapterMixin` enforces the safe subprocess invocation contract: stdin-piped prompt, `text=True`, `encoding="utf-8"`, `errors="replace"`, mandatory timeout, list-form argv (`shell=False`)
 - [x] **ADP-03**: Any adapter that returns `returncode == 0` AND empty stdout raises `AdapterError` (defends against the live Codex `exec` TTY bug and any future similar regression)
 - [x] **ADP-04**: Adapter timeout triggers cross-platform process-tree kill (handles child processes on POSIX and Windows)
-- [ ] **ADP-05**: `ClaudeAdapter` invokes `claude -p` with prompt via stdin and returns trimmed stdout
+- [x] **ADP-05**: `ClaudeAdapter` invokes `claude -p` with prompt via stdin and returns trimmed stdout
 - [ ] **ADP-06**: `GeminiAdapter` invokes `gemini -p` with prompt via stdin and returns trimmed stdout
 - [ ] **ADP-07**: `CodexAdapter` invokes `codex exec` with prompt via stdin and returns trimmed stdout
 - [x] **ADP-08**: Adapter raises a clear `AdapterAuthError` with re-auth instructions when the underlying CLI is not logged in
@@ -186,7 +186,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADP-02 | Phase 4 | Complete (plan 04-01 commit eceb9da — `_SubprocessAdapterMixin._run_subprocess` uses `subprocess.Popen` with `text=True, encoding="utf-8", errors="replace", shell=False`, list-form argv, mandatory timeout, prompt piped via stdin via `proc.communicate(input=prompt)`; mypy --strict + ruff clean) |
 | ADP-03 | Phase 4 | Complete (plan 04-01 commit eceb9da — `_run_subprocess` raises `AdapterError` when `proc.returncode == 0 and not stdout.strip()` with a message naming `openai/codex#19945`; verified by inline integration smoke test) |
 | ADP-04 | Phase 4 | Complete (plan 04-01 commit eceb9da — `subprocess.TimeoutExpired` in `_run_subprocess` calls `_kill_process_tree(proc)` BEFORE re-raising as `AdapterError`; POSIX `os.killpg(os.getpgid(pid), SIGKILL)` after `start_new_session=True`; Windows `taskkill /T /F /PID` after `CREATE_NEW_PROCESS_GROUP`; the taskkill subprocess.run itself uses the full safe-contract kwargs so 04-03's TST-05 lint test will not flag it) |
-| ADP-05 | Phase 4 | Pending |
+| ADP-05 | Phase 4 | Complete (plan 04-02 commits 85e1c8f + 40dd2ab — `src/ultra_claude/adapters/claude.py` defines `class ClaudeAdapter(_SubprocessAdapterMixin)` with `name = cli_name = "claude"`, 5-element lowercase `auth_error_markers` tuple, and one-line `invoke(prompt, timeout)` returning `self._run_subprocess(["claude", "-p"], prompt, timeout)`; zero direct subprocess imports; `isinstance(ClaudeAdapter(), Adapter)` is True; `adapters/__init__.py` re-exports ClaudeAdapter; mypy --strict + ruff clean; pytest 16/16 PASS zero regression; mocked-subprocess runtime tests in 04-03) |
 | ADP-06 | Phase 7 | Pending |
 | ADP-07 | Phase 7 | Pending |
 | ADP-08 | Phase 4 | Complete (plan 04-01 commit eceb9da — two paths both raise `AdapterAuthError`: (a) `FileNotFoundError` on `Popen` -> "CLI not found on PATH; run `<cli> login`", (b) case-insensitive substring match of `auth_error_markers` against `stdout + stderr` -> "not authenticated; run `<cli> login`"; `AdapterAuthError` subclasses `AdapterError` so continue-on-error catches both) |
