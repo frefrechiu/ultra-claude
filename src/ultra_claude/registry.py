@@ -1,11 +1,10 @@
 """Adapter registry -- maps an ``AgentConfig.adapter`` literal to an instance.
 
 The registry is a thin dispatch function so the orchestrator never imports
-concrete adapter classes directly. Phase 7 will extend ``get_adapter`` to
-return ``GeminiAdapter()`` and ``CodexAdapter()``; for Phase 6 we ship the
-``"claude"`` mapping plus explicit ``NotImplementedError`` for the two
-literals that are valid in :class:`~ultra_claude.config.AgentConfig` but
-not yet implemented.
+concrete adapter classes directly. After Phase 7 (ADP-06 + ADP-07), all
+three adapter literals (``"claude"``, ``"gemini"``, ``"codex"``) return
+real instances; the ``NotImplementedError`` branch was removed when
+GeminiAdapter and CodexAdapter landed.
 
 Why a function and not a dict: the dict approach instantiates every adapter
 at import time, which would fail in environments where (e.g.) only the
@@ -18,7 +17,7 @@ dispatch, so a function is the right shape.
 
 from __future__ import annotations
 
-from .adapters import Adapter, ClaudeAdapter
+from .adapters import Adapter, ClaudeAdapter, CodexAdapter, GeminiAdapter
 
 __all__ = ["get_adapter"]
 
@@ -35,9 +34,6 @@ def get_adapter(adapter_kind: str) -> Adapter:
         A new :class:`~ultra_claude.adapters.base.Adapter` instance.
 
     Raises:
-        NotImplementedError: ``"gemini"`` or ``"codex"`` -- those adapters
-            land in Phase 7. The message names the next phase explicitly so
-            users running ahead of the roadmap get a clear signpost.
         ValueError: Any other string -- ``AgentConfig.adapter`` is a Literal
             so this should be unreachable in practice, but we never trust
             external input.
@@ -45,11 +41,10 @@ def get_adapter(adapter_kind: str) -> Adapter:
 
     if adapter_kind == "claude":
         return ClaudeAdapter()
-    if adapter_kind in ("gemini", "codex"):
-        raise NotImplementedError(
-            f"{adapter_kind!r} adapter ships in Phase 7 (next phase); "
-            f"only 'claude' is wired in Phase 6."
-        )
+    if adapter_kind == "gemini":
+        return GeminiAdapter()
+    if adapter_kind == "codex":
+        return CodexAdapter()
     raise ValueError(
         f"unknown adapter kind: {adapter_kind!r} "
         f"(expected one of 'claude', 'gemini', 'codex')"

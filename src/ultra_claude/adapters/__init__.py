@@ -12,15 +12,29 @@ The public surface is:
   third-party adapters; they should implement the Protocol directly.
 * :class:`~ultra_claude.adapters.claude.ClaudeAdapter` -- first concrete
   adapter, wraps ``claude -p`` (Phase 4).
-* ``GeminiAdapter`` and ``CodexAdapter`` will land in Phase 7, reusing
-  :class:`_SubprocessAdapterMixin` unchanged.
+* :class:`~ultra_claude.adapters.gemini.GeminiAdapter` -- second concrete
+  adapter, wraps ``gemini -p`` (Phase 7, ADP-06).
+* :class:`~ultra_claude.adapters.codex.CodexAdapter` -- third concrete
+  adapter, wraps ``codex exec`` (Phase 7, ADP-07). The empty-stdout
+  defense in the mixin catches openai/codex#19945 for free -- see the
+  CodexAdapter module docstring for the live-bug context.
 """
 
 from __future__ import annotations
 
 from .base import Adapter, _SubprocessAdapterMixin
 from .claude import ClaudeAdapter
+from .codex import CodexAdapter
+from .gemini import GeminiAdapter
 
-# Order is intentional (base Protocol + mixin first, then concrete adapters);
-# matches the chronological-by-introduction convention used in exceptions.py.
-__all__ = ["Adapter", "_SubprocessAdapterMixin", "ClaudeAdapter"]  # noqa: RUF022
+# Order is intentional (base Protocol + mixin first, then concrete adapters
+# in roadmap-introduction order: Claude landed in Phase 4, then
+# Gemini + Codex landed together in Phase 7. Alphabetical reordering would
+# obscure the architectural narrative).
+__all__ = [  # noqa: RUF022
+    "Adapter",
+    "_SubprocessAdapterMixin",
+    "ClaudeAdapter",
+    "GeminiAdapter",
+    "CodexAdapter",
+]
