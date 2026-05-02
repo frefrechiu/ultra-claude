@@ -33,7 +33,7 @@
 **Plans:** 3 plans
 - [x] 01-01-PLAN.md — Repository skeleton (LICENSE, .gitignore, README, CHANGELOG, src/ultra_claude/__init__.py with __version__)
 - [x] 01-02-PLAN.md — pyproject.toml with hatchling backend, pinned runtime/dev deps, dynamic version, src layout, ruff/mypy/pytest tool config
-- [ ] 01-03-PLAN.md — Build sdist+wheel, clean-venv smoke test, PUBLISH.md runbook + manual `twine upload` checkpoint (autonomous: false)
+- [x] 01-03-PLAN.md — Build sdist+wheel, clean-venv smoke test, PUBLISH.md runbook + manual `twine upload` checkpoint (autonomous portion COMPLETE; PKG-05 user-action twine upload pending — runbook at `.planning/phases/01-project-skeleton-pypi-name-reservation/PUBLISH.md`)
 **UI hint**: no
 
 ### Phase 2: Config Schema & YAML Loader
@@ -170,8 +170,8 @@ Phases 1, 8, and 9 are strict serialization points — they cannot run in parall
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Skeleton & PyPI Name Reservation | 2/3 | In progress | - |
-| 2. Config Schema & YAML Loader | 0/0 | Not started | - |
+| 1. Project Skeleton & PyPI Name Reservation | 3/3 | Autonomous portion complete; PKG-05 awaits user `twine upload` per PUBLISH.md | - (closes when user reports "uploaded") |
+| 2. Config Schema & YAML Loader | 0/0 | Not started (unblocked) | - |
 | 3. Transcript Module | 0/0 | Not started | - |
 | 4. Adapter Protocol & ClaudeAdapter | 0/0 | Not started | - |
 | 5. Stop Conditions | 0/0 | Not started | - |
@@ -200,6 +200,7 @@ All 58 v1 requirements mapped to exactly one phase. No orphans, no duplicates.
 
 ---
 *Roadmap created: 2026-05-02 from PROJECT.md + REQUIREMENTS.md + research/*
-*Last updated: 2026-05-02 after Phase 1 plan decomposition (3 plans, 2 waves)*
+*Last updated: 2026-05-02 after Phase 1 plan 01-03 autonomous completion (3/3 plans done; PKG-05 deferred to user)*
 *Plan 01-01 completed: 2026-05-02 (commits 562d05e, 2b15b36)*
 *Plan 01-02 completed: 2026-05-02 (commit b9bf3c5)*
+*Plan 01-03 completed (autonomous portion): 2026-05-02 (commits 3e31832, e96ccb6); user-action twine upload pending per PUBLISH.md*

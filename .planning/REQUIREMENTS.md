@@ -13,7 +13,7 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 - [x] **PKG-02**: Repository ships a valid `pyproject.toml` using the `hatchling` build backend with pinned minimum versions for click, pydantic v2, and pyyaml
 - [x] **PKG-03**: Repository ships an `MIT LICENSE` file at the project root
 - [x] **PKG-04**: Repository ships a `.gitignore` covering Python build artifacts, virtualenvs, and editor files
-- [ ] **PKG-05**: A `0.0.1` stub package is reserved on PyPI under the name `ultra-claude` before any feature work merges (squat-protection)
+- [ ] **PKG-05**: A `0.0.1` stub package is reserved on PyPI under the name `ultra-claude` before any feature work merges (squat-protection) — *Build artifacts produced and validated locally in plan 01-03 (sdist + wheel pass twine check, clean-venv install verifies `__version__ == "0.0.1"` triple alignment); operator runbook at `.planning/phases/01-project-skeleton-pypi-name-reservation/PUBLISH.md`. Closure pending user-side `python -m twine upload dist/ultra_claude-0.0.1*` with their PyPI API token; mark complete after `pip install ultra-claude==0.0.1` from PyPI returns the stub.*
 - [ ] **PKG-06**: `v0.1.0` is published to PyPI manually via `python -m build` + `twine upload`
 - [x] **PKG-07**: `__version__` is exposed from `ultra_claude.__init__` and matches the `[project] version` in `pyproject.toml` (export delivered in plan 01-01 commit 2b15b36; dynamic-version wiring delivered in plan 01-02 commit b9bf3c5 — `[tool.hatch.version] path = "src/ultra_claude/__init__.py"` resolves statically to the `__version__ = "0.0.1"` literal; runtime cross-check after `pip install` lands in plan 01-03)
 
@@ -169,7 +169,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PKG-02 | Phase 1 | Complete (plan 01-02, commit b9bf3c5) |
 | PKG-03 | Phase 1 | Complete (plan 01-01, commit 562d05e) |
 | PKG-04 | Phase 1 | Complete (plan 01-01, commit 562d05e) |
-| PKG-05 | Phase 1 | Pending |
+| PKG-05 | Phase 1 | Pending (artifacts + runbook ready in plan 01-03; awaits user `twine upload`) |
 | PKG-06 | Phase 9 | Pending |
 | PKG-07 | Phase 1 | Complete (plan 01-01 export commit 2b15b36 + plan 01-02 dynamic wiring commit b9bf3c5); runtime cross-check in plan 01-03 |
 | CFG-01 | Phase 2 | Pending |
@@ -246,4 +246,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after plan 01-02 (pyproject.toml landed; PKG-02 complete, PKG-07 fully complete via static cross-check)*
+*Last updated: 2026-05-02 after plan 01-03 autonomous completion (build artifacts + clean-venv smoke test + PUBLISH.md runbook landed; PKG-05 staged, deferred-to-user-action for twine upload)*
