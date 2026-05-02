@@ -16,7 +16,7 @@
 - [x] **Phase 6: Orchestrator Loop** - `run(config, task) -> Path` with round-robin turns, transcript-as-context, structured stderr logging
 - [x] **Phase 7: Gemini & Codex Adapters** - Two more adapters reusing the proven mixin; validates the empty-stdout defense against the live Codex bug
 - [x] **Phase 8: CLI Surface & `debate` Preset** - `ultra-claude run`/`doctor`/`--version`/`--help` with all flags + bundled `presets/debate.yaml`
-- [ ] **Phase 9: Tests, Docs, Examples & v0.1.0 Release** - Full test suite (mocked subprocess), README quickstart, examples directory, manual PyPI publish of `v0.1.0`
+- [x] **Phase 9: Tests, Docs, Examples & v0.1.0 Release** - Full test suite (mocked subprocess), README quickstart, examples directory, manual PyPI publish of `v0.1.0` (autonomous portion COMPLETE 2026-05-02; user `python -m twine upload dist/ultra_claude-0.1.0*` pending)
 
 ## Phase Details
 
@@ -159,7 +159,7 @@
 - [x] 09-01-PLAN.md — Version bump (0.0.1->0.1.0) + py.typed marker + CHANGELOG.md [0.1.0] section (commits `8ade3e6` + `bc8e3d1` + `6155dc6`; 2026-05-02; PKG-06 implementation half complete)
 - [x] 09-02-PLAN.md — tests/fixtures/echo_cli.py fake-CLI script + tests/test_e2e_with_echo_cli.py orchestrator E2E test (commits `58ec2f8` + `2575869`; 2026-05-02; TST-03 + TST-04 closed)
 - [x] 09-03-PLAN.md — Full v0.1.0 README.md + CONTRIBUTING.md + examples/ directory (synthetic transcript) (commits `078dc7c` + `180be45` + `2ab93b7`; 2026-05-02; DOC-01 + DOC-02 + PRE-02 closed)
-- [ ] 09-04-PLAN.md — python -m build wheel+sdist + clean-venv smoke install + pytest --cov + ruff + mypy gates + PUBLISH.md v0.1.0 section
+- [x] 09-04-PLAN.md — python -m build wheel+sdist + clean-venv smoke install + pytest --cov + ruff + mypy gates + PUBLISH.md v0.1.0 section (commits `e462b8f` + `1e4d2f3`; 2026-05-02; PKG-01 + PKG-06 + TST-01 + TST-02 + TST-06 + TST-07 closed; user must run `python -m twine upload dist/ultra_claude-0.1.0*` to publish)
 **UI hint**: no
 
 ## Parallelization Summary
