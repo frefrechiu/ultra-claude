@@ -14,7 +14,7 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 - [x] **PKG-03**: Repository ships an `MIT LICENSE` file at the project root
 - [x] **PKG-04**: Repository ships a `.gitignore` covering Python build artifacts, virtualenvs, and editor files
 - [ ] **PKG-05**: A `0.0.1` stub package is reserved on PyPI under the name `ultra-claude` before any feature work merges (squat-protection) — *Build artifacts produced and validated locally in plan 01-03 (sdist + wheel pass twine check, clean-venv install verifies `__version__ == "0.0.1"` triple alignment); operator runbook at `.planning/phases/01-project-skeleton-pypi-name-reservation/PUBLISH.md`. Closure pending user-side `python -m twine upload dist/ultra_claude-0.0.1*` with their PyPI API token; mark complete after `pip install ultra-claude==0.0.1` from PyPI returns the stub.*
-- [ ] **PKG-06**: `v0.1.0` is published to PyPI manually via `python -m build` + `twine upload`
+- [ ] **PKG-06**: `v0.1.0` is published to PyPI manually via `python -m build` + `twine upload` (implementation half delivered in plan 09-01 commits 8ade3e6 + bc8e3d1 + 6155dc6 — `__version__ = "0.1.0"` literal in src/ultra_claude/__init__.py + empty PEP 561 py.typed marker + CHANGELOG.md [0.1.0] - 2026-05-02 section listing the v1 feature surface; release-side closure (`python -m build` -> dist/ artifacts -> user `twine upload`) lands in plan 09-04)
 - [x] **PKG-07**: `__version__` is exposed from `ultra_claude.__init__` and matches the `[project] version` in `pyproject.toml` (export delivered in plan 01-01 commit 2b15b36; dynamic-version wiring delivered in plan 01-02 commit b9bf3c5 — `[tool.hatch.version] path = "src/ultra_claude/__init__.py"` resolves statically to the `__version__ = "0.0.1"` literal; runtime cross-check after `pip install` lands in plan 01-03)
 
 ### Config Schema & Loader
@@ -182,7 +182,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PKG-03 | Phase 1 | Complete (plan 01-01, commit 562d05e) |
 | PKG-04 | Phase 1 | Complete (plan 01-01, commit 562d05e) |
 | PKG-05 | Phase 1 | Pending (artifacts + runbook ready in plan 01-03; awaits user `twine upload`) |
-| PKG-06 | Phase 9 | Pending |
+| PKG-06 | Phase 9 | Implementation half complete in plan 09-01 (commits 8ade3e6 + bc8e3d1 + 6155dc6: 0.1.0 literal + py.typed marker + CHANGELOG [0.1.0] section); release-side closure deferred to plan 09-04 (`python -m build` + user `twine upload`) |
 | PKG-07 | Phase 1 | Complete (plan 01-01 export commit 2b15b36 + plan 01-02 dynamic wiring commit b9bf3c5); runtime cross-check in plan 01-03 |
 | CFG-01 | Phase 2 | Complete (plan 02-02 commits e97325a + 5c272f0 — `RoundtableConfig.from_yaml_string` + `load_config` parse valid YAML into typed `RoundtableConfig`; verified by `test_valid_yaml_parses_into_typed_config`) |
 | CFG-02 | Phase 2 | Complete (plan 02-02 commits e97325a + 5c272f0 — `AgentConfig` requires `name`/`role`/`adapter` Literal/`system_prompt` with `min_length=1`; verified by `test_missing_agent_field_names_offending_field_path` + `test_invalid_adapter_literal_is_rejected_with_field_path`) |
