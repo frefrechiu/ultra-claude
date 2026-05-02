@@ -27,11 +27,11 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 
 ### Transcript
 
-- [ ] **TRX-01**: Orchestrator writes the transcript as a markdown file, appended after every turn (so `tail -f` works during a run)
-- [ ] **TRX-02**: Each turn is delimited by a non-markdown sentinel (e.g. `<!-- turn:N agent:Claude -->`) so re-prompting the conversation does not collide with content markdown
-- [ ] **TRX-03**: A JSONL sidecar at `<transcript>.jsonl` is written in parallel, one record per turn, capturing turn index, agent name, role, prompt-hash, and raw output
-- [ ] **TRX-04**: Transcript file uses LF newlines on all platforms (`newline="\n"`)
-- [ ] **TRX-05**: Transcript content is encoded as UTF-8 on disk
+- [x] **TRX-01**: Orchestrator writes the transcript as a markdown file, appended after every turn (so `tail -f` works during a run)
+- [x] **TRX-02**: Each turn is delimited by a non-markdown sentinel (e.g. `<!-- turn:N agent:Claude -->`) so re-prompting the conversation does not collide with content markdown
+- [x] **TRX-03**: A JSONL sidecar at `<transcript>.jsonl` is written in parallel, one record per turn, capturing turn index, agent name, role, prompt-hash, and raw output
+- [x] **TRX-04**: Transcript file uses LF newlines on all platforms (`newline="\n"`)
+- [x] **TRX-05**: Transcript content is encoded as UTF-8 on disk
 
 ### Adapters (subprocess-based)
 
@@ -177,11 +177,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CFG-03 | Phase 2 | Complete (plan 02-01 commit ddfca71 + plan 02-02 commits e97325a + 5c272f0 — `ConfigError` wraps `yaml.YAMLError`/`pydantic.ValidationError`/`FileNotFoundError`; `format_validation_error` produces field-path-named lines; verified by `test_malformed_yaml_produces_human_readable_error` + `test_format_validation_error_produces_field_path_per_line`) |
 | CFG-04 | Phase 2 | Complete (plan 02-02 commits e97325a + 5c272f0 — `turn_order: Literal['round_robin']` default `'round_robin'`; `max_turns: int = 12, ge=2`; verified by `test_non_round_robin_turn_order_is_rejected` + `test_defaults_for_max_turns_and_stop_keywords`) |
 | CFG-05 | Phase 2 | Complete (plan 02-02 commits e97325a + 5c272f0 — `stop_keywords: list[str] = default_factory=lambda: ['AGREED', 'DONE']`; verified by `test_defaults_for_max_turns_and_stop_keywords`) |
-| TRX-01 | Phase 3 | Pending |
-| TRX-02 | Phase 3 | Pending |
-| TRX-03 | Phase 3 | Pending |
-| TRX-04 | Phase 3 | Pending |
-| TRX-05 | Phase 3 | Pending |
+| TRX-01 | Phase 3 | Complete (plan 03-01 commits 88b6186 + 6230667 — `Transcript.append_turn` writes markdown via `mode="a"`; verified by `test_three_turn_round_trip_appends_to_markdown` asserting strictly increasing file size between calls) |
+| TRX-02 | Phase 3 | Complete (plan 03-01 commits 88b6186 + 6230667 — `_render_turn_block` emits `<!-- turn:{turn} agent:{agent} -->` sentinel; verified by `test_each_turn_has_html_comment_sentinel` with anchored multiline regex) |
+| TRX-03 | Phase 3 | Complete (plan 03-01 commits 88b6186 + 6230667 — JSONL sidecar at `markdown_path.with_suffix(suffix + ".jsonl")` written via `TurnRecord.model_dump_json()` per turn with turn/agent/role/prompt_hash/output fields; verified by `test_jsonl_sidecar_records_match_schema`) |
+| TRX-04 | Phase 3 | Complete (plan 03-01 commits 88b6186 + 6230667 — every `open()` passes `newline="\n"`; verified by `test_lf_only_on_disk` asserting `b"\r\n" not in path.read_bytes()` for both files) |
+| TRX-05 | Phase 3 | Complete (plan 03-01 commits 88b6186 + 6230667 — every `open()` passes `encoding="utf-8"`; verified by `test_utf8_round_trip` with em-dash + smart quotes + rocket emoji) |
 | ADP-01 | Phase 4 | Pending |
 | ADP-02 | Phase 4 | Pending |
 | ADP-03 | Phase 4 | Pending |
@@ -246,4 +246,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after plan 02-02 autonomous completion (CFG-01, CFG-02, CFG-03, CFG-04, CFG-05 all COMPLETE — `src/ultra_claude/config.py` schema + `load_config` + `format_validation_error` + 8-test pytest suite landed via commits e97325a + 5c272f0; Phase 2 closes)*
+*Last updated: 2026-05-02 after plan 03-01 autonomous completion (TRX-01, TRX-02, TRX-03, TRX-04, TRX-05 all COMPLETE — `src/ultra_claude/transcript.py` (TurnRecord + Transcript with append-as-you-go markdown + JSONL sidecar) + 8-test pytest suite landed via commits 88b6186 + 6230667; full suite 16/16 PASS; Phase 3 closes)*

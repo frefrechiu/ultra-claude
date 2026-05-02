@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v0.1.0
 milestone_name: Release
-status: phase-2-complete-config-schema-and-yaml-loader-landed
-last_updated: "2026-05-02T02:39:52Z"
+status: phase-3-complete-transcript-module-landed
+last_updated: "2026-05-02T02:59:22Z"
 progress:
   total_phases: 9
-  completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
-  percent: 56
+  completed_phases: 2
+  total_plans: 6
+  completed_plans: 6
+  percent: 67
 ---
 
 # State: ultra-claude
@@ -20,21 +20,21 @@ progress:
 
 **Core Value:** A user can run `ultra-claude run task.md` and get three CLI agents debating their problem in a transcript file — using only their existing CLI logins, no API keys.
 
-**Current Focus:** Phase 2 COMPLETE. Plan 02-02 closed CFG-01..CFG-05 — `src/ultra_claude/config.py` (schema + `load_config` + `format_validation_error`) + `tests/__init__.py` + `tests/test_config.py` (8 tests, 8 PASS) landed via commits `e97325a` + `5c272f0`. Phase 1 autonomous portion still complete; PKG-05 still pending user `twine upload` (independent of Phase 2 progress). Phase 3 (Transcript Module) is now unblocked.
+**Current Focus:** Phase 3 COMPLETE. Plan 03-01 closed TRX-01..TRX-05 — `src/ultra_claude/transcript.py` (`TurnRecord` Pydantic model + `Transcript` class with append-as-you-go markdown + JSONL sidecar) and `tests/test_transcript.py` (8 tests, 8 PASS; full suite 16/16 PASS) landed via commits `88b6186` + `6230667`. Phase 1 autonomous portion still complete; PKG-05 still pending user `twine upload` (independent of subsequent phases). Phases 4 (Adapter Protocol & ClaudeAdapter) and 5 (Stop Conditions) are now unblocked.
 
 ## Current Position
 
-Phase: 02-config-schema-yaml-loader — COMPLETE (2/2 plans, all 5 CFG requirements closed)
-Next phase: 03-transcript-module (depends on Phase 2; can begin)
+Phase: 03-transcript-module — COMPLETE (1/1 plan, all 5 TRX requirements closed)
+Next phase: 04-adapter-protocol-claudeadapter (depends on Phase 1; can begin in parallel with Phase 5)
 | Field | Value |
 |-------|-------|
-| Phase | 2 (Config Schema & YAML Loader) — COMPLETE |
-| Plan | 02-01 + 02-02 both COMPLETE; Phase 3 NEXT |
-| Status | All 5 CFG requirements complete; `from ultra_claude.config import RoundtableConfig, AgentConfig, load_config, format_validation_error, ConfigError` works; 8/8 tests pass; LF-only on disk; all 9 plan-level verification commands PASS |
-| Progress | 1/9 phases complete; 5/5 plans (Phase 1: 3/3, Phase 2: 2/2) |
+| Phase | 3 (Transcript Module) — COMPLETE |
+| Plan | 03-01 COMPLETE; Phase 4 NEXT (parallelizable with Phase 5) |
+| Status | All 5 TRX requirements complete; `from ultra_claude.transcript import Transcript, TurnRecord` works; 8/8 transcript tests pass + 8/8 config tests still pass (16 total); LF-only on disk; UTF-8 round-trip with em-dash/smart-quote/emoji proven; all plan-level verification commands PASS |
+| Progress | 2/9 phases complete; 6/6 plans (Phase 1: 3/3, Phase 2: 2/2, Phase 3: 1/1) |
 
 ```
-[#####               ] 5/9 plans (56%) — Phase 2 complete; Phase 3 next
+[######              ] 6/9 plans (67%) — Phase 3 complete; Phase 4 (and parallel Phase 5) next
 ```
 
 ## Performance Metrics
@@ -42,10 +42,10 @@ Next phase: 03-transcript-module (depends on Phase 2; can begin)
 | Metric | Value |
 |--------|-------|
 | Phases planned | 9 |
-| Phases complete | 1 (Phase 2 fully closed; Phase 1 awaiting user twine upload to fully close PKG-05) |
-| Plans complete | 5 (Phase 1: 3/3, Phase 2: 2/2) |
+| Phases complete | 2 (Phases 2 + 3 fully closed; Phase 1 awaiting user twine upload to fully close PKG-05) |
+| Plans complete | 6 (Phase 1: 3/3, Phase 2: 2/2, Phase 3: 1/1) |
 | v1 requirements mapped | 58/58 |
-| Requirements completed | 9 (PKG-02, PKG-03, PKG-04, PKG-07, CFG-01, CFG-02, CFG-03, CFG-04, CFG-05) |
+| Requirements completed | 14 (PKG-02, PKG-03, PKG-04, PKG-07, CFG-01..05, TRX-01..05) |
 | Requirements partial | 0 |
 | Requirements deferred-to-user | 1 (PKG-05 — twine upload, runbook ready) |
 | Coverage | 100% |
@@ -54,6 +54,7 @@ Next phase: 03-transcript-module (depends on Phase 2; can begin)
 | Plan 01-03 duration | ~5 min (2026-05-02T02:00:57Z → 2026-05-02T02:06:15Z) — autonomous portion |
 | Plan 02-01 duration | ~2 min (2026-05-02T02:28:34Z → 2026-05-02T02:30:33Z) |
 | Plan 02-02 duration | ~4 min (2026-05-02T02:35:56Z → 2026-05-02T02:39:52Z) |
+| Plan 03-01 duration | ~6 min (2026-05-02T02:53:30Z → 2026-05-02T02:59:22Z) — 2 tasks, 2 commits, 1 Rule 1 deviation (Python 3.11 f-string limitation) |
 
 ## Accumulated Context
 
@@ -87,6 +88,10 @@ Next phase: 03-transcript-module (depends on Phase 2; can begin)
 - [x] **Plan 02-01 (`ConfigError` exception class):** New file `src/ultra_claude/exceptions.py` (1387 bytes, 34 lines, LF-only, ASCII-only). Defines `class ConfigError(Exception)` with a docstring documenting the three failure modes it wraps (`yaml.YAMLError`, `pydantic.ValidationError`, `FileNotFoundError`). Module docstring foreshadows Phase 4 `AdapterError`/`AdapterAuthError` additions. `__all__ = ["ConfigError"]` declared. Zero third-party imports. Commit: `ddfca71`. Requirements: CFG-03 partial (foundation completed by 02-02).
 - [x] **Plan 02-02 (`config.py` + tests):** New file `src/ultra_claude/config.py` (9714 bytes, 267 lines, LF-only, ASCII-only) defining `AgentConfig` (Literal['claude','gemini','codex'] adapter, all required, min_length=1), `RoundtableConfig` (agents min_length=2, max_turns default 12 ge=2, stop_keywords default ['AGREED','DONE'], turn_order Literal['round_robin'], abort_on_error False, transcript_path optional, task optional), `load_config(path) -> RoundtableConfig`, `RoundtableConfig.from_yaml_string` classmethod, `format_validation_error(err, source_path) -> str` with specialised `literal_error`/`missing` wording, `_format_loc` ('agents', 0, 'adapter') -> 'agents[0].adapter', `_format_yaml_error` 1-indexed line/column. Both `BaseModel`s use `ConfigDict(extra='forbid')`. `__all__` exports 5 public symbols. Plus `tests/__init__.py` (0 bytes, package marker) and `tests/test_config.py` (8763 bytes, 276 lines, 8 test functions). All 8 tests pass; all 9 plan-level verification commands PASS. One Rule 3 deviation: ran `pip install -e ".[dev]"` (acknowledged in plan note) to make `ultra_claude` importable for pytest collection — no working-tree changes. Commits: `e97325a` (feat: add config schema and YAML loader), `5c272f0` (test: add config validation test suite). Requirements: CFG-01..CFG-05 all COMPLETE.
 
+### Phase 3 Progress (COMPLETE)
+
+- [x] **Plan 03-01 (`transcript.py` + tests):** New file `src/ultra_claude/transcript.py` (11708 bytes, 295 lines, LF-only, UTF-8) defining `TurnRecord(BaseModel)` (Pydantic v2; `turn` ge=1, `agent`/`role` min_length=1, `prompt_hash` exactly 64 hex chars, `output` str; ConfigDict extra=forbid) and `Transcript` class with `__init__(markdown_path, *, header_task=None, started_at=None)`, `markdown_path`/`jsonl_path` read-only `@property` (jsonl path = markdown path with `.jsonl` appended via `with_suffix(suffix + ".jsonl")` — literal append, not replace), `append_turn(turn, agent, role, prompt, output)` (writes BOTH markdown block + JSONL line; SHA-256 hex prompt_hash on UTF-8-encoded prompt; both opens use `mode="a", encoding="utf-8", newline="\n"`; header rendered on first write only when stat().st_size==0), `read_turns()` (returns `[]` if sidecar missing, else parses each line via `TurnRecord.model_validate_json`), `__len__`, `markdown_text()`/`jsonl_text()` read-back helpers. Sentinel format: `<!-- turn:N agent:Name -->` (Pitfall #8 mitigation; locked for Phase 5 stop conditions). `__init__` raises `OSError` when parent directory missing (D-11 — no auto-mkdir); does NOT erase existing markdown (D-10 — idempotent re-open). Plus `tests/test_transcript.py` (12880 bytes, 337 lines, 8 tests, all PASS): `test_three_turn_round_trip_appends_to_markdown` (TRX-01), `test_each_turn_has_html_comment_sentinel` (TRX-02), `test_jsonl_sidecar_records_match_schema` (TRX-03), `test_lf_only_on_disk` (TRX-04), `test_utf8_round_trip` (TRX-05 — em-dash + smart quotes + rocket emoji), `test_read_turns_returns_empty_list_when_sidecar_missing` (D-08), `test_init_raises_oserror_when_parent_missing` (D-11), `test_idempotent_creation_does_not_erase_existing_markdown` (D-10). Full suite: 16/16 PASS (8 Phase 2 + 8 Phase 3 — zero regression). Two deviations: Rule 1 (Python 3.11 `SyntaxError: f-string expression part cannot include a backslash` in `test_lf_only_on_disk` — fixed by lifting CRLF byte literal counts into locals before f-string interpolation; behavior identical) + Rule 3 (ruff lint cleanups: I001 extra blank line removed, B905 added `strict=True` to `zip()`, RUF001 x3 noqa on intentional smart-quote test fixtures). Commits: `88b6186` (feat: add transcript module with TurnRecord + Transcript classes), `6230667` (test: add transcript test suite covering TRX-01..TRX-05). SUMMARY at `.planning/phases/03-transcript-module/03-01-SUMMARY.md`. Requirements: TRX-01..TRX-05 all COMPLETE.
+
 ### Out-of-Scope Discoveries Logged (not actioned in 02-01)
 
 - **`core.autocrlf=true` on Windows host risks CRLF on checkout.** Working-tree and git index are LF-only after this commit, but a future clone/checkout on Windows could materialise CRLF, breaking the cross-platform discipline (CLAUDE.md constraint #6). Recommended fix is a repo-root `.gitattributes` forcing LF. Logged at `.planning/phases/02-config-schema-yaml-loader/deferred-items.md`. Project-wide concern, not specific to plan 02-01 — should be addressed via a small chore plan.
@@ -106,26 +111,32 @@ None for autonomous execution. Phase 1 final closure (PKG-05) gates on a one-ste
 
 ## Session Continuity
 
-**Last action:** Executed Phase 2 plan 02-02 (config schema + YAML loader + tests). Created `src/ultra_claude/config.py` (9714 bytes, 267 lines, LF-only, ASCII-only) with `AgentConfig`, `RoundtableConfig`, `load_config(path) -> RoundtableConfig`, `RoundtableConfig.from_yaml_string` classmethod, `format_validation_error(err, source_path) -> str` with specialised `literal_error`/`missing` wording, `_format_loc` and `_format_yaml_error` helpers, `__all__` exporting 5 public symbols. Both Pydantic models use `ConfigDict(extra='forbid')`. Created `tests/__init__.py` (0 bytes, package marker) and `tests/test_config.py` (8763 bytes, 276 lines, 8 test functions covering CFG-01..CFG-05 plus wire-format check and file-not-found path). `python -m pytest tests/test_config.py -v` shows 8/8 PASSED in 0.11s. All 9 plan-level verification commands PASS (full suite, CFG references, public API, ConfigError identity, defaults, turn_order rejection, error isolation, LF-only, parse). Verified ConfigError-from-config and ConfigError-from-exceptions are the SAME class object (no shadowing). Verified ValidationError + yaml.YAMLError never leak to the caller (3-layer assertion). Atomic commits: `e97325a` (feat: add config schema and YAML loader) + `5c272f0` (test: add config validation test suite). One Rule 3 deviation: ran `pip install -e ".[dev]" --quiet` to make `ultra_claude` importable for pytest collection (plan acknowledged this in note; no working-tree changes). SUMMARY at `.planning/phases/02-config-schema-yaml-loader/02-02-SUMMARY.md`. Phase 2 fully CLOSED.
+**Last action:** Executed Phase 3 plan 03-01 (transcript module + 8-test pytest suite). Created `src/ultra_claude/transcript.py` (11708 bytes, 295 lines, LF-only, UTF-8) with `TurnRecord(BaseModel)` (Pydantic v2; turn ge=1, agent/role min_length=1, prompt_hash exactly 64 hex chars, output str; ConfigDict extra=forbid) and `Transcript` class with `__init__(markdown_path, *, header_task=None, started_at=None)`, read-only `markdown_path`/`jsonl_path` properties (jsonl_path uses literal-append `.jsonl`, not suffix-replace), `append_turn(turn, agent, role, prompt, output)` that writes BOTH the markdown block AND the JSONL line per call (every `open()` uses `mode="a", encoding="utf-8", newline="\n"`; SHA-256 hex prompt_hash on UTF-8-encoded prompt; header rendered on first write only when stat().st_size==0), `read_turns()` returning `[]` if sidecar missing else `list[TurnRecord]`, `__len__`, plus `markdown_text()`/`jsonl_text()` read-back helpers. Sentinel format `<!-- turn:N agent:Name -->` locked (Pitfall #8 mitigation). `__init__` raises OSError on missing parent (D-11 — no auto-mkdir) and does not erase existing markdown (D-10 — idempotent re-open). Plus `tests/test_transcript.py` (12880 bytes, 337 lines, 8 tests covering TRX-01..TRX-05 + D-08/D-10/D-11). All 8 transcript tests PASS; full suite shows 16/16 PASS (no Phase 2 regression). All plan-level verification commands PASS: import check, pytest tests/, LF-only check on both files, mypy --strict on transcript.py, ruff on both files, sentinel-format grep. Two deviations: **Rule 1** — Python 3.11 `SyntaxError: f-string expression part cannot include a backslash` in `test_lf_only_on_disk`; fixed by lifting CRLF byte-literal counts into locals (`md_crlf_count`/`jsonl_crlf_count`) before interpolating into f-string assert messages; functionally identical, arguably cleaner; PEP 701 lifts this restriction in 3.12 but project floor is 3.10/3.11. **Rule 3** — ruff lint cleanups before commit: I001 (removed extra blank line after imports), B905 (added `strict=True` to `zip(records, payload)` for fail-loud on length mismatch), RUF001 x3 (noqa on intentional smart-quote test fixtures — the smart quotes ARE the test payload). Atomic commits: `88b6186` (feat: add transcript module with TurnRecord + Transcript classes) + `6230667` (test: add transcript test suite covering TRX-01..TRX-05). SUMMARY at `.planning/phases/03-transcript-module/03-01-SUMMARY.md`. Phase 3 fully CLOSED.
 
-**Next action:** Phase 3 (Transcript Module) is unblocked and ready to begin. Phase 3 will land `src/ultra_claude/transcript.py` with the append-as-you-go markdown writer using non-markdown HTML-comment sentinels (per Pitfall #8 to avoid markdown-in-markdown corruption) plus a JSONL sidecar. Phase 3 imports `AgentConfig` from `ultra_claude.config` (now available). Phase 3 covers TRX-01..TRX-05. Run `/gsd-plan-phase 3` (or `/gsd-discuss-phase 3` to clarify approach first) to decompose Phase 3 into executable plans.
+**Next action:** Phases 4 (Adapter Protocol & ClaudeAdapter) and 5 (Stop Conditions) are now unblocked. They are parallelizable per ROADMAP — Phase 4 owns the subprocess invocation contract (locks `text=True, encoding="utf-8", errors="replace"`, mandatory timeout, list-form argv, `shell=False`, stdin-piped prompts, empty-stdout defense, cross-platform process-tree kill) and the first concrete `ClaudeAdapter`; Phase 5 owns three composable stop strategies (`Keyword` with anchored multiline regex + N=2/M=2 unanimity-window, `MaxTurns`, `AnyOf`). Phase 5 consumes `Transcript.read_turns()` and the `<!-- turn:N agent:Name -->` sentinel format both delivered by this plan. Run `/gsd-plan-phase 4` (or `/gsd-plan-phase 5`, or both with `/gsd-discuss-phase` first) to decompose them into executable plans.
 
 **Files in scope:**
 
 - `.planning/PROJECT.md` — core value, constraints, key decisions
-- `.planning/REQUIREMENTS.md` — 58 v1 requirements mapped 100% to phases (9 complete, 1 deferred-to-user)
+- `.planning/REQUIREMENTS.md` — 58 v1 requirements mapped 100% to phases (14 complete, 1 deferred-to-user)
 - `.planning/ROADMAP.md` — 9-phase structure with goal-backward success criteria
 - `.planning/STATE.md` — this file
 - `.planning/phases/01-project-skeleton-pypi-name-reservation/PUBLISH.md` — operator runbook for the deferred user action (PKG-05)
 - `.planning/phases/02-config-schema-yaml-loader/02-01-PLAN.md` — completed plan
 - `.planning/phases/02-config-schema-yaml-loader/02-01-SUMMARY.md` — completion summary for 02-01
 - `.planning/phases/02-config-schema-yaml-loader/02-02-PLAN.md` — completed plan
-- `.planning/phases/02-config-schema-yaml-loader/02-02-SUMMARY.md` — completion summary for 02-02 (this plan)
-- `.planning/phases/02-config-schema-yaml-loader/02-CONTEXT.md` — phase context (decisions, code insights, specifics)
+- `.planning/phases/02-config-schema-yaml-loader/02-02-SUMMARY.md` — completion summary for 02-02
+- `.planning/phases/02-config-schema-yaml-loader/02-CONTEXT.md` — phase 2 context
 - `.planning/phases/02-config-schema-yaml-loader/deferred-items.md` — out-of-scope discoveries (autocrlf on Windows)
-- `src/ultra_claude/exceptions.py` — landed in plan 02-01, consumed by 02-02
-- `src/ultra_claude/config.py` — newly landed in plan 02-02, consumed by Phase 3+ (RoundtableConfig + AgentConfig)
-- `tests/__init__.py` and `tests/test_config.py` — newly landed in plan 02-02 (8 tests, all PASS)
+- `.planning/phases/03-transcript-module/03-CONTEXT.md` — phase 3 context (decisions, code insights, specifics)
+- `.planning/phases/03-transcript-module/03-01-PLAN.md` — completed plan (this plan)
+- `.planning/phases/03-transcript-module/03-01-SUMMARY.md` — completion summary for 03-01 (this plan)
+- `src/ultra_claude/exceptions.py` — landed in plan 02-01
+- `src/ultra_claude/config.py` — landed in plan 02-02
+- `src/ultra_claude/transcript.py` — newly landed in plan 03-01, consumed by Phase 5+ (Transcript + TurnRecord) and Phase 6 (orchestrator's append-as-you-go writer)
+- `tests/__init__.py` — package marker (Phase 2)
+- `tests/test_config.py` — landed in plan 02-02 (8 tests, all PASS)
+- `tests/test_transcript.py` — newly landed in plan 03-01 (8 tests, all PASS)
 - `.planning/research/{SUMMARY,STACK,ARCHITECTURE,PITFALLS,FEATURES}.md` — context for plan-time research-flagged phases
 
 ---
@@ -135,3 +146,4 @@ None for autonomous execution. Phase 1 final closure (PKG-05) gates on a one-ste
 *Plan 01-03 completed: 2026-05-02 — commits 3e31832 (chore: .gitignore .smoke-venv defensive add) + e96ccb6 (docs: PUBLISH.md runbook); dist/ artifacts produced and smoke-tested locally; PKG-05 deferred to user action*
 *Plan 02-01 completed: 2026-05-02 — commit ddfca71 (feat: add ConfigError exception class); CFG-03 partial (foundation; full delivery in 02-02)*
 *Plan 02-02 completed: 2026-05-02 — commits e97325a (feat: add config schema and YAML loader) + 5c272f0 (test: add config validation test suite); CFG-01..CFG-05 all COMPLETE; 8/8 tests PASS; Phase 2 fully CLOSED*
+*Plan 03-01 completed: 2026-05-02 — commits 88b6186 (feat: add transcript module with TurnRecord + Transcript classes) + 6230667 (test: add transcript test suite covering TRX-01..TRX-05); TRX-01..TRX-05 all COMPLETE; 8/8 transcript tests PASS + 16/16 full suite PASS; Phase 3 fully CLOSED*

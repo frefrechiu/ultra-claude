@@ -10,7 +10,7 @@
 
 - [ ] **Phase 1: Project Skeleton & PyPI Name Reservation** - Reserve `ultra-claude` on PyPI as a `0.0.1` stub, ship `pyproject.toml`/LICENSE/.gitignore/`__version__` exposure
 - [x] **Phase 2: Config Schema & YAML Loader** - Pydantic v2 models for `RoundtableConfig`/`AgentConfig` with helpful validation errors
-- [ ] **Phase 3: Transcript Module** - Append-as-you-go markdown writer with sentinel turn delimiters and JSONL sidecar
+- [x] **Phase 3: Transcript Module** - Append-as-you-go markdown writer with sentinel turn delimiters and JSONL sidecar
 - [ ] **Phase 4: Adapter Protocol & ClaudeAdapter** - `Adapter` `typing.Protocol` + `_SubprocessAdapterMixin` + first concrete adapter; locks the subprocess invocation contract
 - [ ] **Phase 5: Stop Conditions** - `Keyword` (anchored regex + unanimity-window), `MaxTurns`, `AnyOf` composite
 - [ ] **Phase 6: Orchestrator Loop** - `run(config, task) -> Path` with round-robin turns, transcript-as-context, structured stderr logging
@@ -61,7 +61,8 @@
   2. Each turn in the markdown file is delimited by a non-markdown HTML-comment sentinel (e.g. `<!-- turn:N agent:Claude -->`) that survives re-prompting without being parsed as content
   3. Reading the `<transcript>.jsonl` sidecar back yields one JSON object per turn with `turn`, `agent`, `role`, `prompt_hash`, and `output` fields — the sidecar is written atomically alongside the markdown
   4. On Windows, `Path.read_bytes(transcript)` contains zero `\r\n` sequences (LF-only) and decodes cleanly as UTF-8
-**Plans**: TBD
+**Plans:** 1 plan
+- [x] 03-01-PLAN.md — Add `src/ultra_claude/transcript.py` (`TurnRecord` Pydantic model + `Transcript` class with `append_turn`/`read_turns`/`markdown_path`/`jsonl_path`/`__len__`, SHA-256 prompt hashing, LF-only writes, UTF-8 encoding, idempotent re-open) plus `tests/test_transcript.py` (8 tests covering all 5 TRX requirements + 3 locked decisions) — COMPLETE 2026-05-02 (commits 88b6186 + 6230667); 8/8 transcript tests pass + 16/16 full suite PASS; TRX-01..TRX-05 all complete
 **UI hint**: no
 
 ### Phase 4: Adapter Protocol & ClaudeAdapter
@@ -174,7 +175,7 @@ Phases 1, 8, and 9 are strict serialization points — they cannot run in parall
 |-------|----------------|--------|-----------|
 | 1. Project Skeleton & PyPI Name Reservation | 3/3 | Autonomous portion complete; PKG-05 awaits user `twine upload` per PUBLISH.md | - (closes when user reports "uploaded") |
 | 2. Config Schema & YAML Loader | 2/2 | COMPLETE — Plan 02-01 (commit ddfca71, `ConfigError` class) + Plan 02-02 (commits e97325a + 5c272f0, schema + loader + 8-test pytest suite); CFG-01..CFG-05 all complete | 2026-05-02 |
-| 3. Transcript Module | 0/0 | Not started | - |
+| 3. Transcript Module | 1/1 | COMPLETE — Plan 03-01 (commits 88b6186 + 6230667, transcript module + 8-test pytest suite); TRX-01..TRX-05 all complete; 16/16 full suite PASS | 2026-05-02 |
 | 4. Adapter Protocol & ClaudeAdapter | 0/0 | Not started | - |
 | 5. Stop Conditions | 0/0 | Not started | - |
 | 6. Orchestrator Loop | 0/0 | Not started | - |
@@ -202,10 +203,11 @@ All 58 v1 requirements mapped to exactly one phase. No orphans, no duplicates.
 
 ---
 *Roadmap created: 2026-05-02 from PROJECT.md + REQUIREMENTS.md + research/*
-*Last updated: 2026-05-02 after plan 02-02 autonomous completion (Phase 2 CLOSED — `src/ultra_claude/config.py` schema + `load_config` + `format_validation_error` + 8-test pytest suite landed via commits e97325a + 5c272f0; CFG-01..CFG-05 all complete; Phase 2 progress: 2/2 plans)*
+*Last updated: 2026-05-02 after plan 03-01 autonomous completion (Phase 3 CLOSED — `src/ultra_claude/transcript.py` (TurnRecord + Transcript with append-as-you-go markdown + JSONL sidecar, locked HTML-comment sentinel, LF-only on every platform, UTF-8 round-trip) + 8-test pytest suite landed via commits 88b6186 + 6230667; TRX-01..TRX-05 all complete; full suite 16/16 PASS; Phase 3 progress: 1/1 plan)*
 *Plan 01-01 completed: 2026-05-02 (commits 562d05e, 2b15b36)*
 *Plan 01-02 completed: 2026-05-02 (commit b9bf3c5)*
 *Plan 01-03 completed (autonomous portion): 2026-05-02 (commits 3e31832, e96ccb6); user-action twine upload pending per PUBLISH.md*
 *Phase 2 planned: 2026-05-02 (02-01-PLAN.md, 02-02-PLAN.md committed; ready for execution)*
 *Plan 02-01 completed: 2026-05-02 (commit ddfca71 — feat: add ConfigError exception class); CFG-03 partial (foundation; full delivery in 02-02)*
 *Plan 02-02 completed: 2026-05-02 (commits e97325a — feat: add config schema and YAML loader + 5c272f0 — test: add config validation test suite); CFG-01..CFG-05 all complete; Phase 2 fully closed*
+*Plan 03-01 completed: 2026-05-02 (commits 88b6186 — feat: add transcript module with TurnRecord + Transcript classes + 6230667 — test: add transcript test suite covering TRX-01..TRX-05); TRX-01..TRX-05 all complete; Phase 3 fully closed*
