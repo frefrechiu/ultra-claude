@@ -138,7 +138,10 @@
   3. `ultra-claude run --preset debate` works in any directory (no local YAML required) and uses the bundled `presets/debate.yaml` containing three agents (architect: claude, critic: gemini, implementer: codex)
   4. `ultra-claude doctor` runs without invoking the orchestrator: it checks `claude`/`gemini`/`codex` on PATH, probes login state for each, and prints a per-CLI status table with `PASS`/`FAIL`/`UNKNOWN` columns
   5. Exit codes match Unix convention: `0` on success, `1` on runtime/adapter error, `2` on config validation error; live progress (e.g. "Claude is thinking…") renders to stderr only when stdout is a TTY and is suppressed when piped or redirected
-**Plans**: TBD
+**Plans:** 3 plans
+- [x] 08-01-PLAN.md — pyproject.toml [project.scripts] entry point + bundled presets/debate.yaml (PRE-01) — COMPLETE 2026-05-02 (commits 481c8e9 + 7331fc7); PRE-01 marked complete in REQUIREMENTS.md; pyproject.toml gains [project.scripts] ultra-claude = "ultra_claude.cli:main" (still valid TOML; tomllib parses cleanly); src/ultra_claude/presets/debate.yaml created (1033 bytes / 30 lines / LF-only / ASCII-only) bundling 3-agent roundtable (Architect: claude, Critic: gemini, Implementer: codex) with max_turns=9, stop_keywords=[AGREED, SHIP IT]; validates via RoundtableConfig.from_yaml_string; reachable from importlib.resources.files('ultra_claude.presets'); 72/72 full suite PASS (zero regression — plan adds zero Python code); zero Rule-N deviations (plan executed verbatim, anticipated `core.autocrlf=true` defense via `Path.write_bytes` applied as documented); zero deletions; both files independently verifiable
+- [ ] 08-02-PLAN.md — src/ultra_claude/cli.py click group with run + doctor subcommands, --version, all flags, exit-code mapping, TTY-aware logging (CLI-01..CLI-11)
+- [ ] 08-03-PLAN.md — tests/test_cli.py with 11 CliRunner-based tests covering CLI-01..CLI-11 + PRE-01 (zero real subprocess launches)
 **UI hint**: no
 
 ### Phase 9: Tests, Docs, Examples & v0.1.0 Release

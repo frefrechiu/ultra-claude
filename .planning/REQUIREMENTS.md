@@ -77,7 +77,8 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 
 ### Presets & Examples
 
-- [ ] **PRE-01**: A bundled `presets/debate.yaml` ships in the package with three agents (architect: claude, critic: gemini, implementer: codex) and is loadable via `--preset debate`
+- [x] **PRE-01
+**: A bundled `presets/debate.yaml` ships in the package with three agents (architect: claude, critic: gemini, implementer: codex) and is loadable via `--preset debate`
 - [ ] **PRE-02**: An `examples/` directory in the repo contains at least one real captured transcript (e.g. fixing a failing test) with the YAML config alongside it
 
 ### Testing & CI
@@ -212,7 +213,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLI-09 | Phase 8 | Pending |
 | CLI-10 | Phase 8 | Pending |
 | CLI-11 | Phase 8 | Pending |
-| PRE-01 | Phase 8 | Pending |
+| PRE-01 | Phase 8 | Complete (2026-05-02, plan 08-01, commits 481c8e9 + 7331fc7) |
 | PRE-02 | Phase 9 | Pending |
 | TST-01 | Phase 9 | Pending |
 | TST-02 | Phase 9 | Pending |
