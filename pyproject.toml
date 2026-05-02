@@ -59,6 +59,9 @@ dev = [
     "twine>=5.1",
 ]
 
+[project.scripts]
+ultra-claude = "ultra_claude.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/frefrechiu/ultra-claude"
 Repository = "https://github.com/frefrechiu/ultra-claude.git"
