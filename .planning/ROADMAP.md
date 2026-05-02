@@ -13,7 +13,7 @@
 - [x] **Phase 3: Transcript Module** - Append-as-you-go markdown writer with sentinel turn delimiters and JSONL sidecar
 - [x] **Phase 4: Adapter Protocol & ClaudeAdapter** - `Adapter` `typing.Protocol` + `_SubprocessAdapterMixin` + first concrete adapter; locks the subprocess invocation contract
 - [x] **Phase 5: Stop Conditions** - `Keyword` (anchored regex + unanimity-window), `MaxTurns`, `AnyOf` composite
-- [ ] **Phase 6: Orchestrator Loop** - `run(config, task) -> Path` with round-robin turns, transcript-as-context, structured stderr logging
+- [x] **Phase 6: Orchestrator Loop** - `run(config, task) -> Path` with round-robin turns, transcript-as-context, structured stderr logging
 - [ ] **Phase 7: Gemini & Codex Adapters** - Two more adapters reusing the proven mixin; validates the empty-stdout defense against the live Codex bug
 - [ ] **Phase 8: CLI Surface & `debate` Preset** - `ultra-claude run`/`doctor`/`--version`/`--help` with all flags + bundled `presets/debate.yaml`
 - [ ] **Phase 9: Tests, Docs, Examples & v0.1.0 Release** - Full test suite (mocked subprocess), README quickstart, examples directory, manual PyPI publish of `v0.1.0`
@@ -109,7 +109,7 @@
   5. With stdout piped to a file, the file contains only the final transcript path; all progress messages ("turn N starting", "turn N completed", "stopped on Keyword") appear on stderr only — stdout-stderr discipline holds (Twelve-Factor logs)
 **Plans:** 2 plans
 - [x] 06-01-PLAN.md — Adapter registry dispatcher + orchestrator run() function (registry.py + orchestrator.py) — COMPLETE 2026-05-02 (commits 8cfee40 + b9b80b3); ORC-01..ORC-06 satisfied at IMPLEMENTATION level; 363 lines added (registry.py 56 / orchestrator.py 307); 5/5 end-to-end smoke checks PASS via inline `python -c`; 42/42 full suite PASS (zero regression — orchestrator/registry only ADD code); mypy --strict on src/ultra_claude clean (10 modules; was 8); ruff clean on the 2 new files; LF-only + ASCII-only on disk; zero Rule-N deviations during execution
-- [ ] 06-02-PLAN.md — Orchestrator test suite with FakeAdapter helper (8 tests covering ORC-01..ORC-06)
+- [x] 06-02-PLAN.md — Orchestrator test suite with FakeAdapter helper (8 tests covering ORC-01..ORC-06) — COMPLETE 2026-05-02 (commit 747f003); 8 new tests cover round-robin/GOAL ANCHOR/transcript-so-far/keyword unanimity/continue-on-error/abort-on-error/return-path/stdout+caplog discipline; 50/50 full suite PASS (42 prior + 8 new; zero regression); 460 lines added; LF-only + ASCII-only on disk; staged blob LF-only despite `core.autocrlf=true`; mypy --strict on src still clean (10 source files); ruff clean; 2 Rule-N deviations (Rule 1: caplog instead of capsys.err for logger assertions because pytest's logging plugin diverts records — supersedes plan's `propagate=False` suggestion; Rule 3: ruff I001 1-blank-line fix in import block); ORC-01..ORC-06 all COMPLETE; Phase 6 fully CLOSED; Phase 7 unblocked
 **UI hint**: no
 
 ### Phase 7: Gemini & Codex Adapters
@@ -184,7 +184,7 @@ Phases 1, 8, and 9 are strict serialization points — they cannot run in parall
 | 3. Transcript Module | 1/1 | COMPLETE — Plan 03-01 (commits 88b6186 + 6230667, transcript module + 8-test pytest suite); TRX-01..TRX-05 all complete; 16/16 full suite PASS | 2026-05-02 |
 | 4. Adapter Protocol & ClaudeAdapter | 3/3 | COMPLETE — Plan 04-01 (commits e4423d0 + eceb9da, exceptions + Adapter Protocol + `_SubprocessAdapterMixin`) + Plan 04-02 (commits 85e1c8f + 40dd2ab, `ClaudeAdapter`) + Plan 04-03 (commits ab17d77 + e0ea60e + e16c4f9, 20 new tests + TST-05 lint tripwire); ADP-01..05, ADP-08, TST-05 all complete; 36/36 full suite PASS; mypy --strict + ruff clean on src/ultra_claude/adapters and the 3 new test files | 2026-05-02 |
 | 5. Stop Conditions | 1/1 | COMPLETE — Plan 05-01 (commits e56a779 + 9dbc164, `stop_conditions.py` + 6-test pytest suite); STP-01..STP-05 all complete; 42/42 full suite PASS; mypy --strict on src/ultra_claude clean (8 files; was 7); ruff clean on both new files | 2026-05-02 |
-| 6. Orchestrator Loop | 0/2 | Planned — Plan 06-01 (registry + orchestrator) + Plan 06-02 (8-test suite); ORC-01..ORC-06 all mapped; ready for execute-phase 6 | - |
+| 6. Orchestrator Loop | 2/2 | COMPLETE — Plan 06-01 (commits 8cfee40 + b9b80b3, registry.py + orchestrator.py implementation) + Plan 06-02 (commit 747f003, 8-test FakeAdapter suite); ORC-01..ORC-06 all complete; 50/50 full suite PASS; mypy --strict on src/ultra_claude clean (10 modules); ruff clean on all new files; LF-only + ASCII-only on disk | 2026-05-02 |
 | 7. Gemini & Codex Adapters | 0/0 | Not started | - |
 | 8. CLI Surface & `debate` Preset | 0/0 | Not started | - |
 | 9. Tests, Docs, Examples & v0.1.0 Release | 0/0 | Not started | - |
@@ -209,7 +209,7 @@ All 58 v1 requirements mapped to exactly one phase. No orphans, no duplicates.
 
 ---
 *Roadmap created: 2026-05-02 from PROJECT.md + REQUIREMENTS.md + research/*
-*Last updated: 2026-05-02 after plan 05-01 autonomous completion (Phase 5 CLOSED — `src/ultra_claude/stop_conditions.py` (StopCondition Protocol + Keyword (anchored re.MULTILINE regex with unanimity-window n=2/m=2) + MaxTurns + AnyOf composite) + 6-test pytest suite landed via commits e56a779 + 9dbc164; STP-01..STP-05 all complete; full suite 42/42 PASS; Phase 5 progress: 1/1 plan)*
+*Last updated: 2026-05-02 after plan 06-02 autonomous completion (Phase 6 CLOSED — `tests/test_orchestrator.py` (FakeAdapter pure-Python helper + 8 test functions) landed via commit 747f003; ORC-01..ORC-06 all complete; full suite 50/50 PASS — zero regression in 42 prior tests; Phase 6 progress: 2/2 plans; Phase 7 (Gemini + Codex Adapters) unblocked)*
 *Plan 01-01 completed: 2026-05-02 (commits 562d05e, 2b15b36)*
 *Plan 01-02 completed: 2026-05-02 (commit b9bf3c5)*
 *Plan 01-03 completed (autonomous portion): 2026-05-02 (commits 3e31832, e96ccb6); user-action twine upload pending per PUBLISH.md*
@@ -221,3 +221,5 @@ All 58 v1 requirements mapped to exactly one phase. No orphans, no duplicates.
 *Plan 04-02 completed: 2026-05-02 (commits 85e1c8f + 40dd2ab); ADP-05 complete*
 *Plan 04-03 completed: 2026-05-02 (commits ab17d77 + e0ea60e + e16c4f9); TST-05 complete; Phase 4 fully closed (3/3 plans, 7/7 ADP+TST requirements)*
 *Plan 05-01 completed: 2026-05-02 (commits e56a779 — feat(05-01): add StopCondition Protocol + Keyword + MaxTurns + AnyOf + 9dbc164 — test(05-01): add stop_conditions test suite covering STP-01..STP-05 + Pitfall #4); STP-01..STP-05 all complete; 42/42 full suite PASS (zero regression); Phase 5 fully closed*
+*Plan 06-01 completed: 2026-05-02 (commits 8cfee40 + b9b80b3); ORC-01..ORC-06 satisfied at IMPLEMENTATION level; 363 lines added (registry.py + orchestrator.py); 5/5 end-to-end smoke checks PASS via inline `python -c`; 42/42 full suite PASS (zero regression); Phase 6 progress: 1/2 plans*
+*Plan 06-02 completed: 2026-05-02 (commit 747f003 — test(06-02): add orchestrator test suite covering ORC-01..ORC-06); 8-test FakeAdapter suite covering round-robin/GOAL ANCHOR/transcript-so-far/keyword unanimity/continue-on-error/abort-on-error/return-path/stdout+caplog discipline; 460 lines added; 50/50 full suite PASS (42 prior + 8 new; zero regression); 2 Rule-N deviations (Rule 1: caplog instead of capsys.err; Rule 3: ruff I001 import-block formatting); ORC-01..ORC-06 all COMPLETE; Phase 6 fully CLOSED (2/2 plans, 6/6 ORC requirements); Phase 7 unblocked*

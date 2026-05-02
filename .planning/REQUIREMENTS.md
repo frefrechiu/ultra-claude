@@ -54,12 +54,12 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 
 ### Orchestrator Loop
 
-- [ ] **ORC-01**: Orchestrator is a single function `run(config, task) -> Path` that returns the transcript path on completion
-- [ ] **ORC-02**: Orchestrator iterates agents in round-robin order for up to `max_turns` turns
-- [ ] **ORC-03**: Each turn's prompt = task statement + full transcript so far + the current agent's system prompt + a goal-anchoring re-injection of the original task (mitigates problem drift)
-- [ ] **ORC-04**: Orchestrator checks stop conditions after every turn and exits cleanly on first match
-- [ ] **ORC-05**: Adapter errors mid-run are logged to stderr; the run continues unless `abort_on_error: true` is set in config (default `false`)
-- [ ] **ORC-06**: Orchestrator writes structured progress to stderr via stdlib `logging` (turn N starting / completed / stopped); stdout stays clean for piping
+- [x] **ORC-01**: Orchestrator is a single function `run(config, task) -> Path` that returns the transcript path on completion
+- [x] **ORC-02**: Orchestrator iterates agents in round-robin order for up to `max_turns` turns
+- [x] **ORC-03**: Each turn's prompt = task statement + full transcript so far + the current agent's system prompt + a goal-anchoring re-injection of the original task (mitigates problem drift)
+- [x] **ORC-04**: Orchestrator checks stop conditions after every turn and exits cleanly on first match
+- [x] **ORC-05**: Adapter errors mid-run are logged to stderr; the run continues unless `abort_on_error: true` is set in config (default `false`)
+- [x] **ORC-06**: Orchestrator writes structured progress to stderr via stdlib `logging` (turn N starting / completed / stopped); stdout stays clean for piping
 
 ### CLI
 
@@ -195,12 +195,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STP-03 | Phase 5 | Complete (plan 05-01 commits e56a779 + 9dbc164 — `Keyword.__init__(keywords, *, n=2, m=2)` exposes unanimity-window defaults; `Keyword.check` slices `turns[-self._n:]` and counts distinct `.agent` strings via `set[str]`, returns True iff `>= self._m`; verified by `test_keyword_unanimity_two_agents_two_turns` (Architect+Critic both AGREED -> True positive) and `test_keyword_single_agent_self_stop_blocked` (Architect twice -> False; voting-itself-off-the-island defense)) |
 | STP-04 | Phase 5 | Complete (plan 05-01 commits e56a779 + 9dbc164 — `MaxTurns.check` returns `len(transcript) >= self._max_turns` exact-boundary equality; verified by `test_max_turns_equality` asserting both `MaxTurns(12).check(11_turn_transcript) is False` AND `MaxTurns(12).check(12_turn_transcript) is True`) |
 | STP-05 | Phase 5 | Complete (plan 05-01 commits e56a779 + 9dbc164 — `AnyOf.check` returns `any(c.check(transcript) for c in self._conditions)` lazy generator expression for short-circuit evaluation; verified by `test_anyof_short_circuit` with `AnyOf([MaxTurns(3), Keyword(["AGREED"])])` on a 3-turn AGREED-free transcript -> True (MaxTurns fires first; Keyword never reached); plus loose `MaxTurns(99)` sanity case asserting AnyOf returns False when no wrapped condition fires) |
-| ORC-01 | Phase 6 | Pending |
-| ORC-02 | Phase 6 | Pending |
-| ORC-03 | Phase 6 | Pending |
-| ORC-04 | Phase 6 | Pending |
-| ORC-05 | Phase 6 | Pending |
-| ORC-06 | Phase 6 | Pending |
+| ORC-01 | Phase 6 | Complete (plan 06-01 commits 8cfee40 + b9b80b3 — `src/ultra_claude/orchestrator.py:run(config, task, *, transcript_path=None, adapter_factory=None) -> Path` returns `transcript.markdown_path`; verified by plan 06-02 commit 747f003 — `tests/test_orchestrator.py::test_run_3_agent_max_turns_6_writes_6_turns` asserts return value equals input `transcript_path` AND `test_run_returns_transcript_path` asserts `isinstance(result, Path)` + `result.exists()` + 4 sentinel comments) |
+| ORC-02 | Phase 6 | Complete (plan 06-01 commit b9b80b3 — `agent_cfg = config.agents[(turn_idx - 1) % n_agents]` round-robin loop; verified by plan 06-02 commit 747f003 — `test_run_3_agent_max_turns_6_writes_6_turns` asserts 3-agent + max_turns=6 produces declared order `[alpha, beta, gamma, alpha, beta, gamma]` AND each FakeAdapter invoked exactly twice) |
+| ORC-03 | Phase 6 | Complete (plan 06-01 commit b9b80b3 — `_build_prompt` assembles `# Task` -> `# Your role` -> transcript-so-far -> GOAL ANCHOR `# Reminder of the task` + `Respond now as {name} ({role}). Stay focused on the task above.` per Pitfall #6 mitigation; verified by plan 06-02 commit 747f003 — `test_run_includes_task_in_prompt` asserts task appears >=2 times (header + footer) AND `system_prompt` is in prompt AND `Respond now as alpha` + `Stay focused on the task above` in footer; `test_run_includes_transcript_so_far` asserts turn 3's prompt contains both turn 1 and turn 2 outputs) |
+| ORC-04 | Phase 6 | Complete (plan 06-01 commit b9b80b3 — `composite = AnyOf([MaxTurns(config.max_turns), Keyword(config.stop_keywords)])` probed via `composite.check(transcript)` after every `transcript.append_turn`; verified by plan 06-02 commit 747f003 — `test_run_stops_on_keyword_unanimity` asserts 3 agents all returning `"AGREED"` with default n=2/m=2 halts after turn 2 (alpha+beta in window) even though max_turns=6, and gamma never invoked) |
+| ORC-05 | Phase 6 | Complete (plan 06-01 commit b9b80b3 — `try: adapter.invoke(...) except AdapterError as exc:` (subclass-aware single-clause covers AdapterAuthError too) -> `_logger.exception(...)` + placeholder `[adapter error: <exc>]` turn UNLESS `config.abort_on_error` (then bare `raise`); verified by plan 06-02 commit 747f003 — `test_run_continues_on_adapter_error` asserts beta's placeholder turn `"[adapter error: simulated CLI failure]"` appended AND gamma still invoked; `test_run_aborts_on_error_when_configured` asserts `pytest.raises(AdapterError, match="simulated abort")` AND gamma NOT invoked) |
+| ORC-06 | Phase 6 | Complete (plan 06-01 commit b9b80b3 — `_logger = logging.getLogger("ultra_claude.orchestrator")` with idempotent `_ensure_default_handler()` attaching `StreamHandler(sys.stderr)` only when `_logger.hasHandlers()` is False; verified by plan 06-02 commit 747f003 — `test_run_logs_progress_to_stderr_only` asserts `capsys.readouterr().out == ""` (stdout discipline) AND `caplog.text` contains "starting roundtable" + "turn 1 starting" + "turn 2 starting" AND >= 3 records from `ultra_claude.orchestrator` logger name) |
 | CLI-01 | Phase 8 | Pending |
 | CLI-02 | Phase 8 | Pending |
 | CLI-03 | Phase 8 | Pending |
@@ -246,4 +246,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after plan 05-01 autonomous completion (STP-01, STP-02, STP-03, STP-04, STP-05 all COMPLETE — `src/ultra_claude/stop_conditions.py` (StopCondition Protocol + Keyword (anchored re.MULTILINE regex with unanimity-window n=2/m=2) + MaxTurns + AnyOf composite) + 6-test pytest suite landed via commits e56a779 + 9dbc164; full suite 42/42 PASS — zero regression in 36 prior tests; Phase 5 closes)*
+*Last updated: 2026-05-02 after plan 06-02 autonomous completion (ORC-01..ORC-06 all COMPLETE — `tests/test_orchestrator.py` (FakeAdapter pure-Python helper + 8 test functions covering round-robin / GOAL ANCHOR prompt assembly / transcript-so-far / Keyword unanimity early-stop / continue-vs-abort on AdapterError / return-Path correctness / stdout+caplog discipline) landed via commit 747f003; full suite 50/50 PASS — zero regression in 42 prior tests; Phase 6 fully closes; Phase 7 unblocked)*
