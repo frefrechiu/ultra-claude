@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v0.1.0
 milestone_name: Release
 status: unknown
-last_updated: "2026-05-02T01:50:25Z"
+last_updated: "2026-05-02T01:56:12Z"
 progress:
   total_phases: 9
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
-  percent: 11
+  completed_plans: 2
+  percent: 22
 ---
 
 # State: ultra-claude
@@ -20,21 +20,21 @@ progress:
 
 **Core Value:** A user can run `ultra-claude run task.md` and get three CLI agents debating their problem in a transcript file — using only their existing CLI logins, no API keys.
 
-**Current Focus:** Phase 1 — Project Skeleton & PyPI Name Reservation (plan 01-02 next)
+**Current Focus:** Phase 1 — Project Skeleton & PyPI Name Reservation (plan 01-03 next — manual PyPI upload checkpoint)
 
 ## Current Position
 
 Phase: 01-project-skeleton-pypi-name-reservation — EXECUTING
-Plan: 1/3 complete (next: 01-02)
+Plan: 2/3 complete (next: 01-03)
 | Field | Value |
 |-------|-------|
 | Phase | 1 (Project Skeleton & PyPI Name Reservation) |
-| Plan | 01-01 COMPLETE; 01-02 next |
-| Status | Repo skeleton landed (LICENSE, .gitignore, README stub, CHANGELOG, src/ultra_claude/__init__.py with __version__) |
-| Progress | 0/9 phases complete; 1/3 plans in Phase 1 |
+| Plan | 01-01 COMPLETE; 01-02 COMPLETE; 01-03 next |
+| Status | Buildable project: pyproject.toml at root with hatchling backend, dynamic version wired to __init__.py, runtime+dev deps pinned, ruff/mypy/pytest tool tables present |
+| Progress | 0/9 phases complete; 2/3 plans in Phase 1 |
 
 ```
-[#                   ] 1/9 phases (11%)
+[##                  ] 2/9 phases (22%)
 ```
 
 ## Performance Metrics
@@ -43,11 +43,12 @@ Plan: 1/3 complete (next: 01-02)
 |--------|-------|
 | Phases planned | 9 |
 | Phases complete | 0 |
-| Plans complete | 1 |
+| Plans complete | 2 |
 | v1 requirements mapped | 58/58 |
-| Requirements completed | 3 (PKG-03, PKG-04, PKG-07) |
+| Requirements completed | 5 (PKG-02, PKG-03, PKG-04, PKG-07, plus PKG-07 fully verified statically) |
 | Coverage | 100% |
 | Plan 01-01 duration | ~2 min (2026-05-02T01:48:41Z → 2026-05-02T01:50:25Z) |
+| Plan 01-02 duration | ~1.5 min (2026-05-02T01:54:42Z → 2026-05-02T01:56:12Z) |
 
 ## Accumulated Context
 
@@ -72,7 +73,7 @@ Plan: 1/3 complete (next: 01-02)
 ### In-Phase-1 Progress
 
 - [x] **Plan 01-01 (repository skeleton):** LICENSE (MIT, Freddy Chiu 2026), .gitignore, README.md stub with trademark disclaimer, CHANGELOG.md (Keep-a-Changelog), src/ultra_claude/__init__.py with `__version__ = "0.0.1"`. Commits: `562d05e`, `2b15b36`. Requirements: PKG-03, PKG-04, PKG-07.
-- [ ] Plan 01-02 (pyproject.toml + tool configs)
+- [x] **Plan 01-02 (pyproject.toml + tool configs):** PEP 621 metadata + hatchling >= 1.29 backend, dynamic version via `[tool.hatch.version] path = "src/ultra_claude/__init__.py"`, runtime deps pinned (click >= 8.3.3, pydantic >= 2.13.3, pyyaml >= 6.0.3), dev deps pinned (ruff >= 0.13, mypy >= 1.18, pytest >= 8.4 + auxiliaries), `[tool.hatch.build.targets.wheel] packages = ["src/ultra_claude"]` for src layout, ruff/mypy/pytest tool tables. NO `[project.scripts]` (CLI deferred to Phase 8). Commit: `b9bf3c5`. Requirements: PKG-02, PKG-07 (fully complete).
 - [ ] Plan 01-03 (build + manual PyPI upload checkpoint)
 
 ### Active Blockers
@@ -90,14 +91,14 @@ None. Roadmap is unblocked.
 
 ## Session Continuity
 
-**Last action:** Executed Phase 1 plan 01-01 (repository skeleton). Five files created at canonical paths, two atomic commits, all acceptance criteria pass. SUMMARY at `.planning/phases/01-project-skeleton-pypi-name-reservation/01-01-SUMMARY.md`.
+**Last action:** Executed Phase 1 plan 01-02 (pyproject.toml). One file created at repo root (`pyproject.toml`), one atomic commit (`b9bf3c5`), all 26 plan-prompt success criteria pass. Static cross-check confirms `[tool.hatch.version].path` → `src/ultra_claude/__init__.py` → `__version__ = "0.0.1"`. SUMMARY at `.planning/phases/01-project-skeleton-pypi-name-reservation/01-02-SUMMARY.md`.
 
-**Next action:** Execute Phase 1 plan 01-02 (`pyproject.toml` configuration with hatchling backend, pinned deps, src-layout target, ruff/mypy/pytest tool tables).
+**Next action:** Execute Phase 1 plan 01-03 (build sdist+wheel via `python -m build`, clean-venv smoke test of `pip install -e ".[dev]"`, PUBLISH.md runbook, then `checkpoint:human-action` for the user to run `twine upload dist/ultra_claude-0.0.1*` with their PyPI credentials).
 
 **Files in scope:**
 
 - `.planning/PROJECT.md` — core value, constraints, key decisions
-- `.planning/REQUIREMENTS.md` — 58 v1 requirements mapped 100% to phases
+- `.planning/REQUIREMENTS.md` — 58 v1 requirements mapped 100% to phases (5 complete)
 - `.planning/ROADMAP.md` — 9-phase structure with goal-backward success criteria
 - `.planning/STATE.md` — this file
 - `.planning/research/{SUMMARY,STACK,ARCHITECTURE,PITFALLS,FEATURES}.md` — context for plan-time research-flagged phases
@@ -105,3 +106,4 @@ None. Roadmap is unblocked.
 ---
 *State initialized: 2026-05-02 after roadmap creation*
 *Plan 01-01 completed: 2026-05-02 — commits 562d05e (chore: scaffolding files) + 2b15b36 (feat: __version__ stub)*
+*Plan 01-02 completed: 2026-05-02 — commit b9bf3c5 (feat: pyproject.toml with hatchling backend, pinned deps, tool config)*

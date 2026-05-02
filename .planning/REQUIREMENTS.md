@@ -10,12 +10,12 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 ### Packaging & Distribution
 
 - [ ] **PKG-01**: User can `pip install ultra-claude` from PyPI and the `ultra-claude` command is on PATH
-- [ ] **PKG-02**: Repository ships a valid `pyproject.toml` using the `hatchling` build backend with pinned minimum versions for click, pydantic v2, and pyyaml
+- [x] **PKG-02**: Repository ships a valid `pyproject.toml` using the `hatchling` build backend with pinned minimum versions for click, pydantic v2, and pyyaml
 - [x] **PKG-03**: Repository ships an `MIT LICENSE` file at the project root
 - [x] **PKG-04**: Repository ships a `.gitignore` covering Python build artifacts, virtualenvs, and editor files
 - [ ] **PKG-05**: A `0.0.1` stub package is reserved on PyPI under the name `ultra-claude` before any feature work merges (squat-protection)
 - [ ] **PKG-06**: `v0.1.0` is published to PyPI manually via `python -m build` + `twine upload`
-- [x] **PKG-07**: `__version__` is exposed from `ultra_claude.__init__` and matches the `[project] version` in `pyproject.toml` (export side delivered in plan 01-01; match side verified after plan 01-02 lands `pyproject.toml`)
+- [x] **PKG-07**: `__version__` is exposed from `ultra_claude.__init__` and matches the `[project] version` in `pyproject.toml` (export delivered in plan 01-01 commit 2b15b36; dynamic-version wiring delivered in plan 01-02 commit b9bf3c5 — `[tool.hatch.version] path = "src/ultra_claude/__init__.py"` resolves statically to the `__version__ = "0.0.1"` literal; runtime cross-check after `pip install` lands in plan 01-03)
 
 ### Config Schema & Loader
 
@@ -166,12 +166,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | PKG-01 | Phase 9 | Pending |
-| PKG-02 | Phase 1 | Pending |
+| PKG-02 | Phase 1 | Complete (plan 01-02, commit b9bf3c5) |
 | PKG-03 | Phase 1 | Complete (plan 01-01, commit 562d05e) |
 | PKG-04 | Phase 1 | Complete (plan 01-01, commit 562d05e) |
 | PKG-05 | Phase 1 | Pending |
 | PKG-06 | Phase 9 | Pending |
-| PKG-07 | Phase 1 | Complete-export (plan 01-01, commit 2b15b36); match verified after plan 01-02 |
+| PKG-07 | Phase 1 | Complete (plan 01-01 export commit 2b15b36 + plan 01-02 dynamic wiring commit b9bf3c5); runtime cross-check in plan 01-03 |
 | CFG-01 | Phase 2 | Pending |
 | CFG-02 | Phase 2 | Pending |
 | CFG-03 | Phase 2 | Pending |
@@ -246,4 +246,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after roadmap traceability mapping*
+*Last updated: 2026-05-02 after plan 01-02 (pyproject.toml landed; PKG-02 complete, PKG-07 fully complete via static cross-check)*
