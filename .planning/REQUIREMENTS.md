@@ -46,11 +46,11 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 
 ### Stop Conditions
 
-- [ ] **STP-01**: A `StopCondition` Strategy interface defines `check(transcript) -> bool`
-- [ ] **STP-02**: `Keyword` stop condition matches an anchored multiline regex (e.g. `^## Decision\n(AGREED|SHIP IT)\s*$`), NOT naive substring match
-- [ ] **STP-03**: `Keyword` requires the marker to appear in the last N turns from M distinct agents (unanimity-window) before stopping; defaults: N=2, M=2
-- [ ] **STP-04**: `MaxTurns` stop condition halts the orchestrator after `config.max_turns` turns
-- [ ] **STP-05**: `AnyOf` composite stops the run when any wrapped condition matches; orchestrator wires bundled conditions through `AnyOf` by default
+- [x] **STP-01**: A `StopCondition` Strategy interface defines `check(transcript) -> bool`
+- [x] **STP-02**: `Keyword` stop condition matches an anchored multiline regex (e.g. `^## Decision\n(AGREED|SHIP IT)\s*$`), NOT naive substring match
+- [x] **STP-03**: `Keyword` requires the marker to appear in the last N turns from M distinct agents (unanimity-window) before stopping; defaults: N=2, M=2
+- [x] **STP-04**: `MaxTurns` stop condition halts the orchestrator after `config.max_turns` turns
+- [x] **STP-05**: `AnyOf` composite stops the run when any wrapped condition matches; orchestrator wires bundled conditions through `AnyOf` by default
 
 ### Orchestrator Loop
 
@@ -190,11 +190,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ADP-06 | Phase 7 | Pending |
 | ADP-07 | Phase 7 | Pending |
 | ADP-08 | Phase 4 | Complete (plan 04-01 commit eceb9da — two paths both raise `AdapterAuthError`: (a) `FileNotFoundError` on `Popen` -> "CLI not found on PATH; run `<cli> login`", (b) case-insensitive substring match of `auth_error_markers` against `stdout + stderr` -> "not authenticated; run `<cli> login`"; `AdapterAuthError` subclasses `AdapterError` so continue-on-error catches both) |
-| STP-01 | Phase 5 | Pending |
-| STP-02 | Phase 5 | Pending |
-| STP-03 | Phase 5 | Pending |
-| STP-04 | Phase 5 | Pending |
-| STP-05 | Phase 5 | Pending |
+| STP-01 | Phase 5 | Complete (plan 05-01 commits e56a779 + 9dbc164 — `src/ultra_claude/stop_conditions.py` defines `@runtime_checkable class StopCondition(Protocol)` with `check(self, transcript: Transcript) -> bool`; verified by `test_stop_condition_protocol_structural` exercising both positive (FakeStop with `check`) and negative (HalfBaked without `check`) duck-typed isinstance probes plus all 3 bundled classes) |
+| STP-02 | Phase 5 | Complete (plan 05-01 commits e56a779 + 9dbc164 — `Keyword.__init__` pre-compiles `re.compile(rf"^{re.escape(kw)}\s*$", re.MULTILINE)` literally at line 105; verified by `test_keyword_anchored_regex_rejects_substring` with m=1 isolation showing `"I am NOT going to say AGREED yet."` returns False — the Pitfall #4 mitigation) |
+| STP-03 | Phase 5 | Complete (plan 05-01 commits e56a779 + 9dbc164 — `Keyword.__init__(keywords, *, n=2, m=2)` exposes unanimity-window defaults; `Keyword.check` slices `turns[-self._n:]` and counts distinct `.agent` strings via `set[str]`, returns True iff `>= self._m`; verified by `test_keyword_unanimity_two_agents_two_turns` (Architect+Critic both AGREED -> True positive) and `test_keyword_single_agent_self_stop_blocked` (Architect twice -> False; voting-itself-off-the-island defense)) |
+| STP-04 | Phase 5 | Complete (plan 05-01 commits e56a779 + 9dbc164 — `MaxTurns.check` returns `len(transcript) >= self._max_turns` exact-boundary equality; verified by `test_max_turns_equality` asserting both `MaxTurns(12).check(11_turn_transcript) is False` AND `MaxTurns(12).check(12_turn_transcript) is True`) |
+| STP-05 | Phase 5 | Complete (plan 05-01 commits e56a779 + 9dbc164 — `AnyOf.check` returns `any(c.check(transcript) for c in self._conditions)` lazy generator expression for short-circuit evaluation; verified by `test_anyof_short_circuit` with `AnyOf([MaxTurns(3), Keyword(["AGREED"])])` on a 3-turn AGREED-free transcript -> True (MaxTurns fires first; Keyword never reached); plus loose `MaxTurns(99)` sanity case asserting AnyOf returns False when no wrapped condition fires) |
 | ORC-01 | Phase 6 | Pending |
 | ORC-02 | Phase 6 | Pending |
 | ORC-03 | Phase 6 | Pending |
@@ -246,4 +246,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after plan 03-01 autonomous completion (TRX-01, TRX-02, TRX-03, TRX-04, TRX-05 all COMPLETE — `src/ultra_claude/transcript.py` (TurnRecord + Transcript with append-as-you-go markdown + JSONL sidecar) + 8-test pytest suite landed via commits 88b6186 + 6230667; full suite 16/16 PASS; Phase 3 closes)*
+*Last updated: 2026-05-02 after plan 05-01 autonomous completion (STP-01, STP-02, STP-03, STP-04, STP-05 all COMPLETE — `src/ultra_claude/stop_conditions.py` (StopCondition Protocol + Keyword (anchored re.MULTILINE regex with unanimity-window n=2/m=2) + MaxTurns + AnyOf composite) + 6-test pytest suite landed via commits e56a779 + 9dbc164; full suite 42/42 PASS — zero regression in 36 prior tests; Phase 5 closes)*

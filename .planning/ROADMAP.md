@@ -12,7 +12,7 @@
 - [x] **Phase 2: Config Schema & YAML Loader** - Pydantic v2 models for `RoundtableConfig`/`AgentConfig` with helpful validation errors
 - [x] **Phase 3: Transcript Module** - Append-as-you-go markdown writer with sentinel turn delimiters and JSONL sidecar
 - [x] **Phase 4: Adapter Protocol & ClaudeAdapter** - `Adapter` `typing.Protocol` + `_SubprocessAdapterMixin` + first concrete adapter; locks the subprocess invocation contract
-- [ ] **Phase 5: Stop Conditions** - `Keyword` (anchored regex + unanimity-window), `MaxTurns`, `AnyOf` composite
+- [x] **Phase 5: Stop Conditions** - `Keyword` (anchored regex + unanimity-window), `MaxTurns`, `AnyOf` composite
 - [ ] **Phase 6: Orchestrator Loop** - `run(config, task) -> Path` with round-robin turns, transcript-as-context, structured stderr logging
 - [ ] **Phase 7: Gemini & Codex Adapters** - Two more adapters reusing the proven mixin; validates the empty-stdout defense against the live Codex bug
 - [ ] **Phase 8: CLI Surface & `debate` Preset** - `ultra-claude run`/`doctor`/`--version`/`--help` with all flags + bundled `presets/debate.yaml`
@@ -92,7 +92,8 @@
   2. `Keyword(["AGREED"])` applied to a transcript where one agent says "I am NOT going to say AGREED yet" returns `False` — the match is anchored multiline (e.g. `^## Decision\nAGREED\s*$`), not naive substring (mitigates Pitfall #4)
   3. `Keyword` with default `N=2, M=2` returns `True` only when the marker appears in the last 2 turns from 2 distinct agents — single-agent self-stopping is impossible
   4. `MaxTurns(12)` returns `True` exactly when the transcript reaches 12 turns; `AnyOf([MaxTurns(12), Keyword(["AGREED"])])` short-circuits on the first match
-**Plans**: TBD
+**Plans:** 1 plan
+- [x] 05-01-PLAN.md — Add `src/ultra_claude/stop_conditions.py` (`StopCondition` Protocol + `Keyword` (anchored `re.MULTILINE` regex with unanimity-window n=2/m=2) + `MaxTurns` + `AnyOf`) plus `tests/test_stop_conditions.py` (6 tests covering STP-01..STP-05 + Pitfall #4) — COMPLETE 2026-05-02 (commits e56a779 + 9dbc164); STP-01..STP-05 all complete; 6/6 new tests pass; 42/42 full suite PASS (zero regression)
 **UI hint**: no
 
 ### Phase 6: Orchestrator Loop
@@ -180,7 +181,7 @@ Phases 1, 8, and 9 are strict serialization points — they cannot run in parall
 | 2. Config Schema & YAML Loader | 2/2 | COMPLETE — Plan 02-01 (commit ddfca71, `ConfigError` class) + Plan 02-02 (commits e97325a + 5c272f0, schema + loader + 8-test pytest suite); CFG-01..CFG-05 all complete | 2026-05-02 |
 | 3. Transcript Module | 1/1 | COMPLETE — Plan 03-01 (commits 88b6186 + 6230667, transcript module + 8-test pytest suite); TRX-01..TRX-05 all complete; 16/16 full suite PASS | 2026-05-02 |
 | 4. Adapter Protocol & ClaudeAdapter | 3/3 | COMPLETE — Plan 04-01 (commits e4423d0 + eceb9da, exceptions + Adapter Protocol + `_SubprocessAdapterMixin`) + Plan 04-02 (commits 85e1c8f + 40dd2ab, `ClaudeAdapter`) + Plan 04-03 (commits ab17d77 + e0ea60e + e16c4f9, 20 new tests + TST-05 lint tripwire); ADP-01..05, ADP-08, TST-05 all complete; 36/36 full suite PASS; mypy --strict + ruff clean on src/ultra_claude/adapters and the 3 new test files | 2026-05-02 |
-| 5. Stop Conditions | 0/0 | Not started | - |
+| 5. Stop Conditions | 1/1 | COMPLETE — Plan 05-01 (commits e56a779 + 9dbc164, `stop_conditions.py` + 6-test pytest suite); STP-01..STP-05 all complete; 42/42 full suite PASS; mypy --strict on src/ultra_claude clean (8 files; was 7); ruff clean on both new files | 2026-05-02 |
 | 6. Orchestrator Loop | 0/0 | Not started | - |
 | 7. Gemini & Codex Adapters | 0/0 | Not started | - |
 | 8. CLI Surface & `debate` Preset | 0/0 | Not started | - |
@@ -206,7 +207,7 @@ All 58 v1 requirements mapped to exactly one phase. No orphans, no duplicates.
 
 ---
 *Roadmap created: 2026-05-02 from PROJECT.md + REQUIREMENTS.md + research/*
-*Last updated: 2026-05-02 after plan 03-01 autonomous completion (Phase 3 CLOSED — `src/ultra_claude/transcript.py` (TurnRecord + Transcript with append-as-you-go markdown + JSONL sidecar, locked HTML-comment sentinel, LF-only on every platform, UTF-8 round-trip) + 8-test pytest suite landed via commits 88b6186 + 6230667; TRX-01..TRX-05 all complete; full suite 16/16 PASS; Phase 3 progress: 1/1 plan)*
+*Last updated: 2026-05-02 after plan 05-01 autonomous completion (Phase 5 CLOSED — `src/ultra_claude/stop_conditions.py` (StopCondition Protocol + Keyword (anchored re.MULTILINE regex with unanimity-window n=2/m=2) + MaxTurns + AnyOf composite) + 6-test pytest suite landed via commits e56a779 + 9dbc164; STP-01..STP-05 all complete; full suite 42/42 PASS; Phase 5 progress: 1/1 plan)*
 *Plan 01-01 completed: 2026-05-02 (commits 562d05e, 2b15b36)*
 *Plan 01-02 completed: 2026-05-02 (commit b9bf3c5)*
 *Plan 01-03 completed (autonomous portion): 2026-05-02 (commits 3e31832, e96ccb6); user-action twine upload pending per PUBLISH.md*
@@ -214,3 +215,7 @@ All 58 v1 requirements mapped to exactly one phase. No orphans, no duplicates.
 *Plan 02-01 completed: 2026-05-02 (commit ddfca71 — feat: add ConfigError exception class); CFG-03 partial (foundation; full delivery in 02-02)*
 *Plan 02-02 completed: 2026-05-02 (commits e97325a — feat: add config schema and YAML loader + 5c272f0 — test: add config validation test suite); CFG-01..CFG-05 all complete; Phase 2 fully closed*
 *Plan 03-01 completed: 2026-05-02 (commits 88b6186 — feat: add transcript module with TurnRecord + Transcript classes + 6230667 — test: add transcript test suite covering TRX-01..TRX-05); TRX-01..TRX-05 all complete; Phase 3 fully closed*
+*Plan 04-01 completed: 2026-05-02 (commits e4423d0 + eceb9da); ADP-01..04, ADP-08 all complete*
+*Plan 04-02 completed: 2026-05-02 (commits 85e1c8f + 40dd2ab); ADP-05 complete*
+*Plan 04-03 completed: 2026-05-02 (commits ab17d77 + e0ea60e + e16c4f9); TST-05 complete; Phase 4 fully closed (3/3 plans, 7/7 ADP+TST requirements)*
+*Plan 05-01 completed: 2026-05-02 (commits e56a779 — feat(05-01): add StopCondition Protocol + Keyword + MaxTurns + AnyOf + 9dbc164 — test(05-01): add stop_conditions test suite covering STP-01..STP-05 + Pitfall #4); STP-01..STP-05 all complete; 42/42 full suite PASS (zero regression); Phase 5 fully closed*
