@@ -11,7 +11,7 @@
 - [ ] **Phase 1: Project Skeleton & PyPI Name Reservation** - Reserve `ultra-claude` on PyPI as a `0.0.1` stub, ship `pyproject.toml`/LICENSE/.gitignore/`__version__` exposure
 - [x] **Phase 2: Config Schema & YAML Loader** - Pydantic v2 models for `RoundtableConfig`/`AgentConfig` with helpful validation errors
 - [x] **Phase 3: Transcript Module** - Append-as-you-go markdown writer with sentinel turn delimiters and JSONL sidecar
-- [ ] **Phase 4: Adapter Protocol & ClaudeAdapter** - `Adapter` `typing.Protocol` + `_SubprocessAdapterMixin` + first concrete adapter; locks the subprocess invocation contract
+- [x] **Phase 4: Adapter Protocol & ClaudeAdapter** - `Adapter` `typing.Protocol` + `_SubprocessAdapterMixin` + first concrete adapter; locks the subprocess invocation contract
 - [ ] **Phase 5: Stop Conditions** - `Keyword` (anchored regex + unanimity-window), `MaxTurns`, `AnyOf` composite
 - [ ] **Phase 6: Orchestrator Loop** - `run(config, task) -> Path` with round-robin turns, transcript-as-context, structured stderr logging
 - [ ] **Phase 7: Gemini & Codex Adapters** - Two more adapters reusing the proven mixin; validates the empty-stdout defense against the live Codex bug
@@ -79,7 +79,7 @@
 **Plans:** 3 plans
 - [x] 04-01-PLAN.md — Extend `src/ultra_claude/exceptions.py` with `AdapterError`/`AdapterAuthError`; create `src/ultra_claude/adapters/__init__.py` + `src/ultra_claude/adapters/base.py` (`Adapter` `typing.Protocol` + `_SubprocessAdapterMixin` with safe `_run_subprocess`: stdin pipe, UTF-8/replace, mandatory timeout, empty-stdout defense, cross-platform process-tree kill via `os.killpg`/`taskkill /T /F`) — COMPLETE 2026-05-02 (commits e4423d0 + eceb9da); ADP-01..04, ADP-08 all complete; mypy --strict + ruff clean; 16/16 existing tests still PASS
 - [x] 04-02-PLAN.md — Create `src/ultra_claude/adapters/claude.py` (`ClaudeAdapter(_SubprocessAdapterMixin)` with `name="claude"`, `cli_name="claude"`, `auth_error_markers`, and one-line `invoke` delegating to `_run_subprocess(["claude", "-p"], prompt, timeout)`); update `adapters/__init__.py` to re-export — COMPLETE 2026-05-02 (commits 85e1c8f + 40dd2ab); ADP-05 closed; mypy --strict + ruff clean; 16/16 tests still PASS (zero regression); zero direct subprocess imports in claude.py (Phase 4 contract proven on first concrete adapter)
-- [ ] 04-03-PLAN.md — Create `tests/test_adapters_base.py` (Protocol structural typing), `tests/test_adapter_claude.py` (5 paths via `pytest-subprocess` `fp` fixture: argv+stdin happy, empty stdout, FileNotFoundError, auth marker, TimeoutExpired+process-tree-kill), `tests/test_subprocess_lint.py` (TST-05: `ast`-walks `src/ultra_claude/` and fails the build on any `subprocess.run`/`subprocess.Popen` missing `text=True`/`encoding="utf-8"`/`errors="replace"` or with `shell=True`) — Wave 2 (depends_on 04-01, 04-02), autonomous (ADP-01..05, ADP-08, TST-05 verified by tests)
+- [x] 04-03-PLAN.md — Create `tests/test_adapters_base.py` (Protocol structural typing), `tests/test_adapter_claude.py` (5 paths via `pytest-subprocess` `fp` fixture: argv+stdin happy, empty stdout, FileNotFoundError, auth marker, TimeoutExpired+process-tree-kill), `tests/test_subprocess_lint.py` (TST-05: `ast`-walks `src/ultra_claude/` and fails the build on any `subprocess.run`/`subprocess.Popen` missing `text=True`/`encoding="utf-8"`/`errors="replace"` or with `shell=True`) — COMPLETE 2026-05-02 (commits ab17d77 + e0ea60e + e16c4f9); 20 new tests (7 base + 10 claude + 3 lint); 36/36 full suite PASS (zero regression); ADP-01..05, ADP-08, TST-05 all verified by executable tests; manual paranoia check confirmed lint test FIRES on synthetic bad subprocess call
 **UI hint**: no
 
 ### Phase 5: Stop Conditions
@@ -179,7 +179,7 @@ Phases 1, 8, and 9 are strict serialization points — they cannot run in parall
 | 1. Project Skeleton & PyPI Name Reservation | 3/3 | Autonomous portion complete; PKG-05 awaits user `twine upload` per PUBLISH.md | - (closes when user reports "uploaded") |
 | 2. Config Schema & YAML Loader | 2/2 | COMPLETE — Plan 02-01 (commit ddfca71, `ConfigError` class) + Plan 02-02 (commits e97325a + 5c272f0, schema + loader + 8-test pytest suite); CFG-01..CFG-05 all complete | 2026-05-02 |
 | 3. Transcript Module | 1/1 | COMPLETE — Plan 03-01 (commits 88b6186 + 6230667, transcript module + 8-test pytest suite); TRX-01..TRX-05 all complete; 16/16 full suite PASS | 2026-05-02 |
-| 4. Adapter Protocol & ClaudeAdapter | 0/3 | Planned 2026-05-02 — 04-01-PLAN.md (exceptions + Adapter Protocol + `_SubprocessAdapterMixin`), 04-02-PLAN.md (`ClaudeAdapter`), 04-03-PLAN.md (test suite + TST-05 lint) | - |
+| 4. Adapter Protocol & ClaudeAdapter | 3/3 | COMPLETE — Plan 04-01 (commits e4423d0 + eceb9da, exceptions + Adapter Protocol + `_SubprocessAdapterMixin`) + Plan 04-02 (commits 85e1c8f + 40dd2ab, `ClaudeAdapter`) + Plan 04-03 (commits ab17d77 + e0ea60e + e16c4f9, 20 new tests + TST-05 lint tripwire); ADP-01..05, ADP-08, TST-05 all complete; 36/36 full suite PASS; mypy --strict + ruff clean on src/ultra_claude/adapters and the 3 new test files | 2026-05-02 |
 | 5. Stop Conditions | 0/0 | Not started | - |
 | 6. Orchestrator Loop | 0/0 | Not started | - |
 | 7. Gemini & Codex Adapters | 0/0 | Not started | - |

@@ -86,7 +86,7 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 - [ ] **TST-02**: Adapter tests use `pytest-subprocess`'s `fp` fixture to assert exact argv, stdin payload, and timeout
 - [ ] **TST-03**: A `tests/fixtures/echo_cli.py` fake-CLI Python script enables orchestrator E2E tests without real LLM calls
 - [ ] **TST-04**: Test coverage of `src/ultra_claude/` is reported by `pytest-cov`
-- [ ] **TST-05**: A grep-based lint test fails the build if any `subprocess.run`/`subprocess.Popen` call in the codebase is missing `encoding="utf-8"` or `errors="replace"`
+- [x] **TST-05**: A grep-based lint test fails the build if any `subprocess.run`/`subprocess.Popen` call in the codebase is missing `encoding="utf-8"` or `errors="replace"`
 - [ ] **TST-06**: `ruff check` and `mypy` (configured strict for `src/ultra_claude/`) pass with zero errors
 - [ ] **TST-07**: Manual `python -m build` produces a wheel and sdist that install cleanly into a fresh virtualenv on macOS, Linux, and Windows (smoke-tested before tagging v0.1.0)
 
@@ -218,7 +218,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TST-02 | Phase 9 | Pending |
 | TST-03 | Phase 9 | Pending |
 | TST-04 | Phase 9 | Pending |
-| TST-05 | Phase 4 | Pending |
+| TST-05 | Phase 4 | Complete (plan 04-03 commit e16c4f9 — `tests/test_subprocess_lint.py` ast-walks every .py file under `src/ultra_claude/`, detects both `subprocess.run`/`subprocess.Popen` attribute access AND bare-imported `run`/`Popen`, asserts each call has `text=True`/`encoding="utf-8"`/`errors="replace"` and does NOT have `shell=True`. Aggregates ALL violations into a single multi-line `pytest.fail(...)` listing every `file:lineno`. Manual paranoia check confirmed the lint test FIRES on synthetic bad scratch files: `subprocess.run(["echo","hi"])` -> 3 missing-keyword violations, and `subprocess.run([...], shell=True)` -> "shell=True is forbidden" violation; scratch files deleted after.) |
 | TST-06 | Phase 9 | Pending |
 | TST-07 | Phase 9 | Pending |
 | DOC-01 | Phase 9 | Pending |
