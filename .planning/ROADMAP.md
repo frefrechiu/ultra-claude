@@ -107,7 +107,9 @@
   3. The orchestrator checks all wired stop conditions after every turn and exits cleanly on the first match (returns the transcript path with status logged to stderr)
   4. When an adapter raises an error mid-run, the error is logged to stderr via `logging` and a placeholder turn is appended; the run continues unless `abort_on_error: true` is set in config (default `false`)
   5. With stdout piped to a file, the file contains only the final transcript path; all progress messages ("turn N starting", "turn N completed", "stopped on Keyword") appear on stderr only — stdout-stderr discipline holds (Twelve-Factor logs)
-**Plans**: TBD
+**Plans:** 2 plans
+- [ ] 06-01-PLAN.md — Adapter registry dispatcher + orchestrator run() function (registry.py + orchestrator.py)
+- [ ] 06-02-PLAN.md — Orchestrator test suite with FakeAdapter helper (8 tests covering ORC-01..ORC-06)
 **UI hint**: no
 
 ### Phase 7: Gemini & Codex Adapters
@@ -182,7 +184,7 @@ Phases 1, 8, and 9 are strict serialization points — they cannot run in parall
 | 3. Transcript Module | 1/1 | COMPLETE — Plan 03-01 (commits 88b6186 + 6230667, transcript module + 8-test pytest suite); TRX-01..TRX-05 all complete; 16/16 full suite PASS | 2026-05-02 |
 | 4. Adapter Protocol & ClaudeAdapter | 3/3 | COMPLETE — Plan 04-01 (commits e4423d0 + eceb9da, exceptions + Adapter Protocol + `_SubprocessAdapterMixin`) + Plan 04-02 (commits 85e1c8f + 40dd2ab, `ClaudeAdapter`) + Plan 04-03 (commits ab17d77 + e0ea60e + e16c4f9, 20 new tests + TST-05 lint tripwire); ADP-01..05, ADP-08, TST-05 all complete; 36/36 full suite PASS; mypy --strict + ruff clean on src/ultra_claude/adapters and the 3 new test files | 2026-05-02 |
 | 5. Stop Conditions | 1/1 | COMPLETE — Plan 05-01 (commits e56a779 + 9dbc164, `stop_conditions.py` + 6-test pytest suite); STP-01..STP-05 all complete; 42/42 full suite PASS; mypy --strict on src/ultra_claude clean (8 files; was 7); ruff clean on both new files | 2026-05-02 |
-| 6. Orchestrator Loop | 0/0 | Not started | - |
+| 6. Orchestrator Loop | 0/2 | Planned — Plan 06-01 (registry + orchestrator) + Plan 06-02 (8-test suite); ORC-01..ORC-06 all mapped; ready for execute-phase 6 | - |
 | 7. Gemini & Codex Adapters | 0/0 | Not started | - |
 | 8. CLI Surface & `debate` Preset | 0/0 | Not started | - |
 | 9. Tests, Docs, Examples & v0.1.0 Release | 0/0 | Not started | - |
