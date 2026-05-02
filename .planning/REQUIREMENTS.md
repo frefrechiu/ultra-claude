@@ -11,11 +11,11 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 
 - [ ] **PKG-01**: User can `pip install ultra-claude` from PyPI and the `ultra-claude` command is on PATH
 - [ ] **PKG-02**: Repository ships a valid `pyproject.toml` using the `hatchling` build backend with pinned minimum versions for click, pydantic v2, and pyyaml
-- [ ] **PKG-03**: Repository ships an `MIT LICENSE` file at the project root
-- [ ] **PKG-04**: Repository ships a `.gitignore` covering Python build artifacts, virtualenvs, and editor files
+- [x] **PKG-03**: Repository ships an `MIT LICENSE` file at the project root
+- [x] **PKG-04**: Repository ships a `.gitignore` covering Python build artifacts, virtualenvs, and editor files
 - [ ] **PKG-05**: A `0.0.1` stub package is reserved on PyPI under the name `ultra-claude` before any feature work merges (squat-protection)
 - [ ] **PKG-06**: `v0.1.0` is published to PyPI manually via `python -m build` + `twine upload`
-- [ ] **PKG-07**: `__version__` is exposed from `ultra_claude.__init__` and matches the `[project] version` in `pyproject.toml`
+- [x] **PKG-07**: `__version__` is exposed from `ultra_claude.__init__` and matches the `[project] version` in `pyproject.toml` (export side delivered in plan 01-01; match side verified after plan 01-02 lands `pyproject.toml`)
 
 ### Config Schema & Loader
 
@@ -167,11 +167,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | PKG-01 | Phase 9 | Pending |
 | PKG-02 | Phase 1 | Pending |
-| PKG-03 | Phase 1 | Pending |
-| PKG-04 | Phase 1 | Pending |
+| PKG-03 | Phase 1 | Complete (plan 01-01, commit 562d05e) |
+| PKG-04 | Phase 1 | Complete (plan 01-01, commit 562d05e) |
 | PKG-05 | Phase 1 | Pending |
 | PKG-06 | Phase 9 | Pending |
-| PKG-07 | Phase 1 | Pending |
+| PKG-07 | Phase 1 | Complete-export (plan 01-01, commit 2b15b36); match verified after plan 01-02 |
 | CFG-01 | Phase 2 | Pending |
 | CFG-02 | Phase 2 | Pending |
 | CFG-03 | Phase 2 | Pending |
