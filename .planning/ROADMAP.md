@@ -108,7 +108,7 @@
   4. When an adapter raises an error mid-run, the error is logged to stderr via `logging` and a placeholder turn is appended; the run continues unless `abort_on_error: true` is set in config (default `false`)
   5. With stdout piped to a file, the file contains only the final transcript path; all progress messages ("turn N starting", "turn N completed", "stopped on Keyword") appear on stderr only — stdout-stderr discipline holds (Twelve-Factor logs)
 **Plans:** 2 plans
-- [ ] 06-01-PLAN.md — Adapter registry dispatcher + orchestrator run() function (registry.py + orchestrator.py)
+- [x] 06-01-PLAN.md — Adapter registry dispatcher + orchestrator run() function (registry.py + orchestrator.py) — COMPLETE 2026-05-02 (commits 8cfee40 + b9b80b3); ORC-01..ORC-06 satisfied at IMPLEMENTATION level; 363 lines added (registry.py 56 / orchestrator.py 307); 5/5 end-to-end smoke checks PASS via inline `python -c`; 42/42 full suite PASS (zero regression — orchestrator/registry only ADD code); mypy --strict on src/ultra_claude clean (10 modules; was 8); ruff clean on the 2 new files; LF-only + ASCII-only on disk; zero Rule-N deviations during execution
 - [ ] 06-02-PLAN.md — Orchestrator test suite with FakeAdapter helper (8 tests covering ORC-01..ORC-06)
 **UI hint**: no
 
