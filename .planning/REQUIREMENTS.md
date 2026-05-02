@@ -213,18 +213,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ORC-04 | Phase 6 | Complete (plan 06-01 commit b9b80b3 — `composite = AnyOf([MaxTurns(config.max_turns), Keyword(config.stop_keywords)])` probed via `composite.check(transcript)` after every `transcript.append_turn`; verified by plan 06-02 commit 747f003 — `test_run_stops_on_keyword_unanimity` asserts 3 agents all returning `"AGREED"` with default n=2/m=2 halts after turn 2 (alpha+beta in window) even though max_turns=6, and gamma never invoked) |
 | ORC-05 | Phase 6 | Complete (plan 06-01 commit b9b80b3 — `try: adapter.invoke(...) except AdapterError as exc:` (subclass-aware single-clause covers AdapterAuthError too) -> `_logger.exception(...)` + placeholder `[adapter error: <exc>]` turn UNLESS `config.abort_on_error` (then bare `raise`); verified by plan 06-02 commit 747f003 — `test_run_continues_on_adapter_error` asserts beta's placeholder turn `"[adapter error: simulated CLI failure]"` appended AND gamma still invoked; `test_run_aborts_on_error_when_configured` asserts `pytest.raises(AdapterError, match="simulated abort")` AND gamma NOT invoked) |
 | ORC-06 | Phase 6 | Complete (plan 06-01 commit b9b80b3 — `_logger = logging.getLogger("ultra_claude.orchestrator")` with idempotent `_ensure_default_handler()` attaching `StreamHandler(sys.stderr)` only when `_logger.hasHandlers()` is False; verified by plan 06-02 commit 747f003 — `test_run_logs_progress_to_stderr_only` asserts `capsys.readouterr().out == ""` (stdout discipline) AND `caplog.text` contains "starting roundtable" + "turn 1 starting" + "turn 2 starting" AND >= 3 records from `ultra_claude.orchestrator` logger name) |
-| CLI-01 | Phase 8 | Pending |
-| CLI-02 | Phase 8 | Pending |
-| CLI-03 | Phase 8 | Pending |
-| CLI-04 | Phase 8 | Pending |
-| CLI-05 | Phase 8 | Pending |
-| CLI-06 | Phase 8 | Pending |
-| CLI-07 | Phase 8 | Pending |
-| CLI-08 | Phase 8 | Pending |
-| CLI-09 | Phase 8 | Pending |
-| CLI-10 | Phase 8 | Pending |
-| CLI-11 | Phase 8 | Pending |
-| PRE-01 | Phase 8 | Complete (2026-05-02, plan 08-01, commits 481c8e9 + 7331fc7) |
+| CLI-01 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; `--version` reads `__version__` from `ultra_claude/__init__.py`; test_version_flag_prints_version_and_exits_zero verifies via CliRunner) |
+| CLI-02 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; click auto-generates `--help` listing `run` + `doctor` subcommands; test_help_flag_lists_subcommands_and_exits_zero verifies via CliRunner) |
+| CLI-03 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; default config path `./ultra-claude.yaml` + transcript path on stdout; test_run_end_to_end_with_fake_adapters_writes_transcript verifies via FakeAdapter injection through `monkeypatch.setattr(orch_module, "get_adapter", ...)`) |
+| CLI-04 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; `--config <path>` overrides default; test_run_with_config_path_overrides_default verifies via CliRunner) |
+| CLI-05 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; `--preset debate` loads bundled YAML via `importlib.resources.files("ultra_claude.presets")`; test_run_with_preset_debate_loads_bundled_yaml verifies via CliRunner from any cwd without local YAML; PRE-01 verified by the same test) |
+| CLI-06 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; `--inline TEXT` provides task as string; test_run_with_inline_task_dry_run_validates_and_exits_zero verifies via CliRunner) |
+| CLI-07 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; `--dry-run` validates config + prints planned turn order without invoking adapters; test_run_dry_run_outputs_full_turn_order verifies all `Turn N:` lines for max_turns=4) |
+| CLI-08 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; `--output PATH` overrides transcript output path; test_run_end_to_end_with_fake_adapters_writes_transcript verifies the transcript is written at the supplied --output path) |
+| CLI-09 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; doctor probes claude/gemini/codex via `shutil.which` + `subprocess.run` with FULL safe-contract kwargs; test_doctor_command_prints_status_table verifies 4-column ASCII table AND that the fake_run callable's safe-contract kwargs assertions fire on every call — defense-in-depth alongside TST-05 lint) |
+| CLI-10 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; ConfigError -> ctx.exit(2); AdapterError (incl. AdapterAuthError subclass) -> ctx.exit(1); test_config_error_exits_with_code_two verifies exit 2 path; test_adapter_error_with_abort_on_error_exits_with_code_one verifies exit 1 path via FakeAdapter raising AdapterError on every invoke + --abort-on-error flag) |
+| CLI-11 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; TTY-aware logging via `_configure_logging` sets `ultra_claude.orchestrator` logger to INFO when BOTH stdout AND stderr are ttys, WARNING otherwise; test_stdout_only_contains_transcript_path_on_success verifies `result.stdout.strip() == str(output)` AND `str(output) not in result.stderr` using click 8.3+'s default-split semantics) |
+| PRE-01 | Phase 8 | Complete (2026-05-02, plan 08-01 commits 481c8e9 + 7331fc7 — bundled `src/ultra_claude/presets/debate.yaml` reachable via `importlib.resources.files('ultra_claude.presets')`; verified by plan 08-03 commit 4ada905 — test_run_with_preset_debate_loads_bundled_yaml asserts CliRunner can run `--preset debate` from any cwd without a local YAML and the output contains all 3 agent names + all 3 adapter literals) |
 | PRE-02 | Phase 9 | Pending |
 | TST-01 | Phase 9 | Pending |
 | TST-02 | Phase 9 | Pending |
