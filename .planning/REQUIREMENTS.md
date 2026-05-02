@@ -174,7 +174,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PKG-07 | Phase 1 | Complete (plan 01-01 export commit 2b15b36 + plan 01-02 dynamic wiring commit b9bf3c5); runtime cross-check in plan 01-03 |
 | CFG-01 | Phase 2 | Pending |
 | CFG-02 | Phase 2 | Pending |
-| CFG-03 | Phase 2 | Pending |
+| CFG-03 | Phase 2 | Partial (foundation in plan 02-01 commit ddfca71 — `ConfigError` class exists; full human-readable formatting lands in plan 02-02 via `format_validation_error` + `load_config` catch path) |
 | CFG-04 | Phase 2 | Pending |
 | CFG-05 | Phase 2 | Pending |
 | TRX-01 | Phase 3 | Pending |
@@ -246,4 +246,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after plan 01-03 autonomous completion (build artifacts + clean-venv smoke test + PUBLISH.md runbook landed; PKG-05 staged, deferred-to-user-action for twine upload)*
+*Last updated: 2026-05-02 after plan 02-01 autonomous completion (CFG-03 partial — `ConfigError` exception class landed in `src/ultra_claude/exceptions.py` via commit ddfca71; full human-readable formatting lands in plan 02-02)*

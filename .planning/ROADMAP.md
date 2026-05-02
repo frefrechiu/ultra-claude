@@ -47,7 +47,7 @@
   3. Omitting `max_turns` defaults to `12`; omitting `stop_keywords` defaults to `["AGREED", "DONE"]`; setting `turn_order` to anything other than `round_robin` is rejected at validation time
   4. Invalid YAML syntax or invalid config types produce a single human-readable error message that names the field path (e.g. `agents[0].adapter: invalid value 'clade'`), not a Python stack trace
 **Plans:** 2 plans
-- [ ] 02-01-PLAN.md — Add `src/ultra_claude/exceptions.py` with `ConfigError` (exception class shared with future Phase 4 adapters; supports CFG-03)
+- [x] 02-01-PLAN.md — Add `src/ultra_claude/exceptions.py` with `ConfigError` (exception class shared with future Phase 4 adapters; supports CFG-03) — COMPLETE 2026-05-02 (commit ddfca71); CFG-03 partial
 - [ ] 02-02-PLAN.md — Add `src/ultra_claude/config.py` (`AgentConfig`, `RoundtableConfig`, `load_config`, `format_validation_error`) plus `tests/test_config.py` covering all 6 CONTEXT.md cases (CFG-01..CFG-05)
 **UI hint**: no
 
@@ -173,7 +173,7 @@ Phases 1, 8, and 9 are strict serialization points — they cannot run in parall
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Project Skeleton & PyPI Name Reservation | 3/3 | Autonomous portion complete; PKG-05 awaits user `twine upload` per PUBLISH.md | - (closes when user reports "uploaded") |
-| 2. Config Schema & YAML Loader | 0/2 | Plans landed (02-01, 02-02); ready for `/gsd-execute-phase 2` | - |
+| 2. Config Schema & YAML Loader | 1/2 | Plan 02-01 COMPLETE (commit ddfca71 — `ConfigError` class in `src/ultra_claude/exceptions.py`); 02-02 NEXT (config.py + tests) | - |
 | 3. Transcript Module | 0/0 | Not started | - |
 | 4. Adapter Protocol & ClaudeAdapter | 0/0 | Not started | - |
 | 5. Stop Conditions | 0/0 | Not started | - |
@@ -202,8 +202,9 @@ All 58 v1 requirements mapped to exactly one phase. No orphans, no duplicates.
 
 ---
 *Roadmap created: 2026-05-02 from PROJECT.md + REQUIREMENTS.md + research/*
-*Last updated: 2026-05-02 after Phase 2 plan decomposition (02-01, 02-02 landed; CFG-01..CFG-05 mapped to executable plans)*
+*Last updated: 2026-05-02 after plan 02-01 autonomous completion (`ConfigError` class landed in `src/ultra_claude/exceptions.py` via commit ddfca71; Phase 2 progress: 1/2 plans)*
 *Plan 01-01 completed: 2026-05-02 (commits 562d05e, 2b15b36)*
 *Plan 01-02 completed: 2026-05-02 (commit b9bf3c5)*
 *Plan 01-03 completed (autonomous portion): 2026-05-02 (commits 3e31832, e96ccb6); user-action twine upload pending per PUBLISH.md*
 *Phase 2 planned: 2026-05-02 (02-01-PLAN.md, 02-02-PLAN.md committed; ready for execution)*
+*Plan 02-01 completed: 2026-05-02 (commit ddfca71 — feat: add ConfigError exception class); CFG-03 partial (foundation; full delivery in 02-02)*

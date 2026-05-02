@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v0.1.0
 milestone_name: Release
-status: phase-1-autonomous-complete-pending-user-twine-upload
-last_updated: "2026-05-02T02:06:15Z"
+status: phase-2-plan-01-complete-config-error-class-landed
+last_updated: "2026-05-02T02:30:33Z"
 progress:
   total_phases: 9
   completed_phases: 0
-  total_plans: 3
-  completed_plans: 3
-  percent: 33
+  total_plans: 5
+  completed_plans: 4
+  percent: 44
 ---
 
 # State: ultra-claude
@@ -20,21 +20,21 @@ progress:
 
 **Core Value:** A user can run `ultra-claude run task.md` and get three CLI agents debating their problem in a transcript file — using only their existing CLI logins, no API keys.
 
-**Current Focus:** Phase 1 autonomously COMPLETE — pending user `twine upload` per `.planning/phases/01-project-skeleton-pypi-name-reservation/PUBLISH.md` (closes PKG-05). Phase 2 (Config Schema & YAML Loader) is unblocked from a foundation standpoint.
+**Current Focus:** Phase 2 underway. Plan 02-01 COMPLETE — `ConfigError` exception class landed in `src/ultra_claude/exceptions.py` (commit `ddfca71`). Phase 1 autonomous portion still complete; PKG-05 still pending user `twine upload` (independent of Phase 2 progress). Plan 02-02 (config.py + tests) is now unblocked.
 
 ## Current Position
 
-Phase: 01-project-skeleton-pypi-name-reservation — AUTONOMOUS EXECUTION COMPLETE; PKG-05 deferred to user
-Plan: 3/3 complete autonomously
+Phase: 02-config-schema-yaml-loader — IN PROGRESS (1/2 plans complete)
+Plan: 02-01 COMPLETE; 02-02 NEXT
 | Field | Value |
 |-------|-------|
-| Phase | 1 (Project Skeleton & PyPI Name Reservation) |
-| Plan | 01-01 COMPLETE; 01-02 COMPLETE; 01-03 COMPLETE (autonomous portion) |
-| Status | Buildable + verified-installable project: dist artifacts produced, clean-venv smoke test passed (__version__ triple alignment proven at 0.0.1), PUBLISH.md runbook ready for user-side twine upload |
-| Progress | 0/9 phases complete; 3/3 plans in Phase 1 (PKG-05 user-action gates phase closure) |
+| Phase | 2 (Config Schema & YAML Loader) |
+| Plan | 02-01 COMPLETE (ConfigError class); 02-02 NEXT (config.py + load_config + tests) |
+| Status | Exception class landed; importable as `from ultra_claude.exceptions import ConfigError`; zero third-party imports; LF-only on disk; all 6 verification commands PASS |
+| Progress | 0/9 phases complete; 4/5 plans (Phase 1: 3/3, Phase 2: 1/2) |
 
 ```
-[###                 ] 3/9 plans (33%) — Phase 1 autonomous portion done
+[####                ] 4/9 plans (44%) — Phase 2 plan 01 of 02 done
 ```
 
 ## Performance Metrics
@@ -42,15 +42,17 @@ Plan: 3/3 complete autonomously
 | Metric | Value |
 |--------|-------|
 | Phases planned | 9 |
-| Phases complete | 0 (Phase 1 awaiting user twine upload to fully close PKG-05) |
-| Plans complete | 3 |
+| Phases complete | 0 (Phase 1 awaiting user twine upload to fully close PKG-05; Phase 2 in progress) |
+| Plans complete | 4 (Phase 1: 3/3, Phase 2: 1/2) |
 | v1 requirements mapped | 58/58 |
 | Requirements completed | 4 (PKG-02, PKG-03, PKG-04, PKG-07) |
+| Requirements partial | 1 (CFG-03 — `ConfigError` class landed in 02-01; full delivery in 02-02) |
 | Requirements deferred-to-user | 1 (PKG-05 — twine upload, runbook ready) |
 | Coverage | 100% |
 | Plan 01-01 duration | ~2 min (2026-05-02T01:48:41Z → 2026-05-02T01:50:25Z) |
 | Plan 01-02 duration | ~1.5 min (2026-05-02T01:54:42Z → 2026-05-02T01:56:12Z) |
 | Plan 01-03 duration | ~5 min (2026-05-02T02:00:57Z → 2026-05-02T02:06:15Z) — autonomous portion |
+| Plan 02-01 duration | ~2 min (2026-05-02T02:28:34Z → 2026-05-02T02:30:33Z) |
 
 ## Accumulated Context
 
@@ -79,6 +81,15 @@ Plan: 3/3 complete autonomously
 - [x] **Plan 01-02 (pyproject.toml + tool configs):** PEP 621 metadata + hatchling >= 1.29 backend, dynamic version via `[tool.hatch.version] path = "src/ultra_claude/__init__.py"`, runtime deps pinned (click >= 8.3.3, pydantic >= 2.13.3, pyyaml >= 6.0.3), dev deps pinned (ruff >= 0.13, mypy >= 1.18, pytest >= 8.4 + auxiliaries), `[tool.hatch.build.targets.wheel] packages = ["src/ultra_claude"]` for src layout, ruff/mypy/pytest tool tables. NO `[project.scripts]` (CLI deferred to Phase 8). Commit: `b9bf3c5`. Requirements: PKG-02, PKG-07 (fully complete).
 - [x] **Plan 01-03 (build + smoke test + PUBLISH.md):** Built `dist/ultra_claude-0.0.1.tar.gz` and `dist/ultra_claude-0.0.1-py3-none-any.whl` via `python -m build`; both pass `twine check`. Clean-venv smoke test verified `__version__ == importlib.metadata.version('ultra-claude') == "0.0.1"` (triple alignment) with `pip install -e ".[dev]"` succeeding in `.smoke-venv` (resolved click 8.3.3, pydantic 2.13.3, pyyaml 6.0.3, ruff 0.15.12, mypy 1.20.2, pytest 9.0.3, all dev tools callable). PUBLISH.md operator runbook authored (`e96ccb6`); `.smoke-venv/` added to .gitignore as defensive Rule 3 deviation (`3e31832`). Task 4 (twine upload) deferred to user action per orchestrator instruction. Commits: `3e31832`, `e96ccb6`. Requirements: PKG-05 staged-but-pending-user-action.
 
+### In-Phase-2 Progress
+
+- [x] **Plan 02-01 (`ConfigError` exception class):** New file `src/ultra_claude/exceptions.py` (1387 bytes, 34 lines, LF-only, ASCII-only). Defines `class ConfigError(Exception)` with a docstring documenting the three failure modes it wraps (`yaml.YAMLError`, `pydantic.ValidationError`, `FileNotFoundError`). Module docstring foreshadows Phase 4 `AdapterError`/`AdapterAuthError` additions. `__all__ = ["ConfigError"]` declared. Zero third-party imports — verified via `dir(module)` scan returning no `pydantic`/`yaml` symbols (clean-OK). `from __future__ import annotations` present defensively. All 6 plan-level verification commands PASS (parse, import, behavior, __all__, LF-only, no third-party leakage). Commit: `ddfca71`. Requirements: CFG-03 partial (foundation; full delivery in 02-02 via `format_validation_error` + `load_config`).
+- [ ] **Plan 02-02 (`config.py` + tests):** NEXT. Will land `AgentConfig`, `RoundtableConfig`, `load_config(path) -> RoundtableConfig`, and `format_validation_error(err, source_path) -> str` with `tests/test_config.py` covering 6 cases per CONTEXT.md. Closes CFG-01..CFG-05.
+
+### Out-of-Scope Discoveries Logged (not actioned in 02-01)
+
+- **`core.autocrlf=true` on Windows host risks CRLF on checkout.** Working-tree and git index are LF-only after this commit, but a future clone/checkout on Windows could materialise CRLF, breaking the cross-platform discipline (CLAUDE.md constraint #6). Recommended fix is a repo-root `.gitattributes` forcing LF. Logged at `.planning/phases/02-config-schema-yaml-loader/deferred-items.md`. Project-wide concern, not specific to plan 02-01 — should be addressed via a small chore plan.
+
 ### Active Blockers
 
 None for autonomous execution. Phase 1 final closure (PKG-05) gates on a one-step user action: running `twine upload`. Subsequent phases (2+) proceed independently of PyPI publish state — they consume the local pyproject.toml + src/ultra_claude/, both of which are committed.
@@ -94,17 +105,23 @@ None for autonomous execution. Phase 1 final closure (PKG-05) gates on a one-ste
 
 ## Session Continuity
 
-**Last action:** Executed Phase 1 plan 01-03 (build + smoke test + PUBLISH.md). `python -m build` produced `dist/ultra_claude-0.0.1.tar.gz` and `dist/ultra_claude-0.0.1-py3-none-any.whl`; both passed `twine check`. Clean-venv smoke test created/destroyed `.smoke-venv` and proved `__version__ == importlib.metadata.version('ultra-claude') == "0.0.1"` triple alignment after `pip install -e ".[dev]"`. PUBLISH.md operator runbook authored at `.planning/phases/01-project-skeleton-pypi-name-reservation/PUBLISH.md`. Two atomic commits: `3e31832` (defensive `.gitignore` add of `.smoke-venv/`, Rule 3 deviation) and `e96ccb6` (PUBLISH.md). Task 4 (twine upload) deferred to user per orchestrator instruction. SUMMARY at `.planning/phases/01-project-skeleton-pypi-name-reservation/01-03-SUMMARY.md`.
+**Last action:** Executed Phase 2 plan 02-01 (`ConfigError` exception class). Created `src/ultra_claude/exceptions.py` (1387 bytes, 34 lines, LF-only, ASCII-only) with `class ConfigError(Exception)`, module docstring foreshadowing Phase 4 `AdapterError`/`AdapterAuthError` additions, `__all__ = ["ConfigError"]`, and `from __future__ import annotations`. Zero third-party imports — verified `dir(module)` contains no `pydantic`/`yaml` symbols (clean-OK). All 6 plan-level verification commands pass post-commit (parse-OK, import-OK, behavior-OK, all-OK, LF-OK, clean-OK). Atomic commit: `ddfca71` (`feat(02-01): add ConfigError exception class`). SUMMARY at `.planning/phases/02-config-schema-yaml-loader/02-01-SUMMARY.md`. Out-of-scope discovery (autocrlf risk on Windows checkout) logged to `.planning/phases/02-config-schema-yaml-loader/deferred-items.md`.
 
-**Next action:** USER runs `python -m twine upload dist/ultra_claude-0.0.1*` per PUBLISH.md to close PKG-05. After upload + `pip install ultra-claude==0.0.1` smoke check from a fresh shell, mark PKG-05 complete in REQUIREMENTS.md and Phase 1 fully closes. Then proceed to Phase 2 planning via `/gsd-plan-phase 2` (Config Schema & YAML Loader) — Phase 2 does not depend on the PyPI upload, only on the local skeleton + pyproject.toml which are committed.
+**Next action:** Execute Phase 2 plan 02-02 (`config.py` + tests). Will import `ConfigError` from this plan's `exceptions.py` (key-link verified — `from .exceptions import ConfigError` from `config.py`). Plan 02-02 lands `AgentConfig`, `RoundtableConfig`, `load_config(path) -> RoundtableConfig`, `format_validation_error(err, source_path) -> str`, plus `tests/test_config.py` covering the 6 cases listed in CONTEXT.md (CFG-01..CFG-05). After 02-02, Phase 2 closes; Phase 3 (Transcript Module) is ready to begin.
 
 **Files in scope:**
 
 - `.planning/PROJECT.md` — core value, constraints, key decisions
-- `.planning/REQUIREMENTS.md` — 58 v1 requirements mapped 100% to phases (4 complete, 1 deferred-to-user)
+- `.planning/REQUIREMENTS.md` — 58 v1 requirements mapped 100% to phases (4 complete, 1 partial via 02-01, 1 deferred-to-user)
 - `.planning/ROADMAP.md` — 9-phase structure with goal-backward success criteria
 - `.planning/STATE.md` — this file
-- `.planning/phases/01-project-skeleton-pypi-name-reservation/PUBLISH.md` — operator runbook for the deferred user action
+- `.planning/phases/01-project-skeleton-pypi-name-reservation/PUBLISH.md` — operator runbook for the deferred user action (PKG-05)
+- `.planning/phases/02-config-schema-yaml-loader/02-01-PLAN.md` — completed plan
+- `.planning/phases/02-config-schema-yaml-loader/02-01-SUMMARY.md` — completion summary for 02-01
+- `.planning/phases/02-config-schema-yaml-loader/02-02-PLAN.md` — next plan (config.py + tests)
+- `.planning/phases/02-config-schema-yaml-loader/02-CONTEXT.md` — phase context (decisions, code insights, specifics)
+- `.planning/phases/02-config-schema-yaml-loader/deferred-items.md` — out-of-scope discoveries (autocrlf on Windows)
+- `src/ultra_claude/exceptions.py` — newly landed in this plan, consumed by 02-02
 - `.planning/research/{SUMMARY,STACK,ARCHITECTURE,PITFALLS,FEATURES}.md` — context for plan-time research-flagged phases
 
 ---
@@ -112,3 +129,4 @@ None for autonomous execution. Phase 1 final closure (PKG-05) gates on a one-ste
 *Plan 01-01 completed: 2026-05-02 — commits 562d05e (chore: scaffolding files) + 2b15b36 (feat: __version__ stub)*
 *Plan 01-02 completed: 2026-05-02 — commit b9bf3c5 (feat: pyproject.toml with hatchling backend, pinned deps, tool config)*
 *Plan 01-03 completed: 2026-05-02 — commits 3e31832 (chore: .gitignore .smoke-venv defensive add) + e96ccb6 (docs: PUBLISH.md runbook); dist/ artifacts produced and smoke-tested locally; PKG-05 deferred to user action*
+*Plan 02-01 completed: 2026-05-02 — commit ddfca71 (feat: add ConfigError exception class); CFG-03 partial (foundation; full delivery in 02-02)*
