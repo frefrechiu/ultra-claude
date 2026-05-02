@@ -165,22 +165,85 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PKG-01 — PKG-07 | (assigned by roadmap) | Pending |
-| CFG-01 — CFG-05 | (assigned by roadmap) | Pending |
-| TRX-01 — TRX-05 | (assigned by roadmap) | Pending |
-| ADP-01 — ADP-08 | (assigned by roadmap) | Pending |
-| STP-01 — STP-05 | (assigned by roadmap) | Pending |
-| ORC-01 — ORC-06 | (assigned by roadmap) | Pending |
-| CLI-01 — CLI-11 | (assigned by roadmap) | Pending |
-| PRE-01 — PRE-02 | (assigned by roadmap) | Pending |
-| TST-01 — TST-07 | (assigned by roadmap) | Pending |
-| DOC-01 — DOC-02 | (assigned by roadmap) | Pending |
+| PKG-01 | Phase 9 | Pending |
+| PKG-02 | Phase 1 | Pending |
+| PKG-03 | Phase 1 | Pending |
+| PKG-04 | Phase 1 | Pending |
+| PKG-05 | Phase 1 | Pending |
+| PKG-06 | Phase 9 | Pending |
+| PKG-07 | Phase 1 | Pending |
+| CFG-01 | Phase 2 | Pending |
+| CFG-02 | Phase 2 | Pending |
+| CFG-03 | Phase 2 | Pending |
+| CFG-04 | Phase 2 | Pending |
+| CFG-05 | Phase 2 | Pending |
+| TRX-01 | Phase 3 | Pending |
+| TRX-02 | Phase 3 | Pending |
+| TRX-03 | Phase 3 | Pending |
+| TRX-04 | Phase 3 | Pending |
+| TRX-05 | Phase 3 | Pending |
+| ADP-01 | Phase 4 | Pending |
+| ADP-02 | Phase 4 | Pending |
+| ADP-03 | Phase 4 | Pending |
+| ADP-04 | Phase 4 | Pending |
+| ADP-05 | Phase 4 | Pending |
+| ADP-06 | Phase 7 | Pending |
+| ADP-07 | Phase 7 | Pending |
+| ADP-08 | Phase 4 | Pending |
+| STP-01 | Phase 5 | Pending |
+| STP-02 | Phase 5 | Pending |
+| STP-03 | Phase 5 | Pending |
+| STP-04 | Phase 5 | Pending |
+| STP-05 | Phase 5 | Pending |
+| ORC-01 | Phase 6 | Pending |
+| ORC-02 | Phase 6 | Pending |
+| ORC-03 | Phase 6 | Pending |
+| ORC-04 | Phase 6 | Pending |
+| ORC-05 | Phase 6 | Pending |
+| ORC-06 | Phase 6 | Pending |
+| CLI-01 | Phase 8 | Pending |
+| CLI-02 | Phase 8 | Pending |
+| CLI-03 | Phase 8 | Pending |
+| CLI-04 | Phase 8 | Pending |
+| CLI-05 | Phase 8 | Pending |
+| CLI-06 | Phase 8 | Pending |
+| CLI-07 | Phase 8 | Pending |
+| CLI-08 | Phase 8 | Pending |
+| CLI-09 | Phase 8 | Pending |
+| CLI-10 | Phase 8 | Pending |
+| CLI-11 | Phase 8 | Pending |
+| PRE-01 | Phase 8 | Pending |
+| PRE-02 | Phase 9 | Pending |
+| TST-01 | Phase 9 | Pending |
+| TST-02 | Phase 9 | Pending |
+| TST-03 | Phase 9 | Pending |
+| TST-04 | Phase 9 | Pending |
+| TST-05 | Phase 4 | Pending |
+| TST-06 | Phase 9 | Pending |
+| TST-07 | Phase 9 | Pending |
+| DOC-01 | Phase 9 | Pending |
+| DOC-02 | Phase 9 | Pending |
 
 **Coverage:**
-- v1 requirements: 51 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 51 ⚠️ (resolved by roadmapper)
+- v1 requirements: 58 total
+- Mapped to phases: 58 (100%)
+- Unmapped: 0
+
+**Phase Distribution:**
+
+| Phase | Requirements | Count |
+|-------|-------------|-------|
+| Phase 1 (Project Skeleton & PyPI Reservation) | PKG-02, PKG-03, PKG-04, PKG-05, PKG-07 | 5 |
+| Phase 2 (Config Schema & YAML Loader) | CFG-01, CFG-02, CFG-03, CFG-04, CFG-05 | 5 |
+| Phase 3 (Transcript Module) | TRX-01, TRX-02, TRX-03, TRX-04, TRX-05 | 5 |
+| Phase 4 (Adapter Protocol & ClaudeAdapter) | ADP-01, ADP-02, ADP-03, ADP-04, ADP-05, ADP-08, TST-05 | 7 |
+| Phase 5 (Stop Conditions) | STP-01, STP-02, STP-03, STP-04, STP-05 | 5 |
+| Phase 6 (Orchestrator Loop) | ORC-01, ORC-02, ORC-03, ORC-04, ORC-05, ORC-06 | 6 |
+| Phase 7 (Gemini & Codex Adapters) | ADP-06, ADP-07 | 2 |
+| Phase 8 (CLI Surface & `debate` Preset) | CLI-01–CLI-11, PRE-01 | 12 |
+| Phase 9 (Tests, Docs, Examples & v0.1.0 Release) | PKG-01, PKG-06, PRE-02, TST-01, TST-02, TST-03, TST-04, TST-06, TST-07, DOC-01, DOC-02 | 11 |
+| **Total** | | **58** |
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after initial definition*
+*Last updated: 2026-05-02 after roadmap traceability mapping*
