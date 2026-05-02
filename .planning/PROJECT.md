@@ -12,41 +12,47 @@ Built for developers who already pay for Claude/Gemini/ChatGPT subscriptions and
 
 If everything else fails, this single command must work end-to-end with a real transcript at the end.
 
+## Current State
+
+**Shipped: v0.1.0 (2026-05-02).** All 58 v1 requirements complete (autonomous-completable parts). 86/86 tests pass in clean venv with NONE of claude/gemini/codex installed; 85% line coverage on `src/ultra_claude/`. Distribution artifacts (`dist/ultra_claude-0.1.0.tar.gz` + wheel) built and twine-checked. Pending user action: `python -m twine upload dist/ultra_claude-0.1.0*` per `.planning/milestones/v0.1.0-phases/01-project-skeleton-pypi-name-reservation/PUBLISH.md`.
+
 ## Requirements
 
-### Validated
+### Validated (v0.1.0 — 2026-05-02)
 
-(None yet — ship to validate)
+- ✓ Python package `ultra-claude`, CLI binary `ultra-claude` — v0.1.0 (PyPI upload pending user)
+- ✓ `Adapter` `typing.Protocol` (NOT `BaseAdapter` ABC — architecture corrected per CLAUDE.md) — v0.1.0
+- ✓ `ClaudeAdapter` invoking `claude -p` via stdin — v0.1.0
+- ✓ `GeminiAdapter` invoking `gemini -p` via stdin — v0.1.0
+- ✓ `CodexAdapter` invoking `codex exec` via stdin (with empty-stdout defense for `openai/codex#19945`) — v0.1.0
+- ✓ Pydantic v2 schema (`RoundtableConfig`, `AgentConfig`) loaded from YAML with field-pointing errors — v0.1.0
+- ✓ Orchestrator function `run(config, task) -> Path` (NOT a class — corrected per CLAUDE.md) — v0.1.0
+- ✓ Stop conditions: `Keyword` (anchored regex + unanimity-window), `MaxTurns`, `AnyOf` — v0.1.0
+- ✓ CLI: `ultra-claude run`, `doctor`, `--version`, `--help` with all flags — v0.1.0
+- ✓ Bundled preset `presets/debate.yaml` (architect + critic + implementer) — v0.1.0
+- ✓ Tests run in clean venv via `pytest-subprocess` — v0.1.0 (86 tests, 85% coverage)
+- ✓ README with quickstart + extending guide; CONTRIBUTING; examples/ — v0.1.0
+- ✓ MIT LICENSE, `pyproject.toml` (hatchling), `.gitignore` — v0.1.0
+- ✓ Build artifacts for v0.1.0 ready for manual `twine upload` — v0.1.0 (autonomous portion)
 
 ### Active
 
-#### v1 — Lean MVP (first PyPI release)
+(No active requirements — v0.1.0 shipped. Run `/gsd-new-milestone` to start v0.1.1 / v0.2.0 / etc.)
 
-- [ ] Python package `ultra-claude` published to PyPI as `ultra-claude`, CLI binary `ultra-claude`
-- [ ] `BaseAdapter` ABC defining the `invoke(prompt, timeout) -> str` contract
-- [ ] `ClaudeAdapter` — spawns `claude -p <prompt>`
-- [ ] `GeminiAdapter` — spawns `gemini -p <prompt>`
-- [ ] `CodexAdapter` — spawns `codex exec <prompt>`
-- [ ] Pydantic config schema (`RoundtableConfig`, `AgentConfig`) loaded from YAML
-- [ ] Orchestrator loop: round-robin turns, transcript-as-context, writes markdown
-- [ ] Stop conditions: keyword match (e.g. `AGREED`, `SHIP IT`) and `max_turns`
-- [ ] CLI entry point: `ultra-claude run <task-file>` reads `ultra-claude.yaml`, writes transcript
-- [ ] One bundled preset: `debate.yaml` (architect + critic + implementer)
-- [ ] Tests with `subprocess.run` mocked so CI runs without real CLIs installed
-- [ ] README with one-line pitch, GIF placeholder, quickstart, "extending to new CLIs"
-- [ ] MIT LICENSE, `pyproject.toml` (hatch), `.gitignore`
-- [ ] First public release: `v0.1.0` published to PyPI manually
+#### v2 candidates (when next milestone is scoped)
 
 #### v2 — Reach (after v1 ships)
 
 - [ ] GitHub Actions: pytest matrix on push/PR
-- [ ] GitHub Actions: auto-publish to PyPI on `v*` tag push
+- [ ] GitHub Actions: auto-publish to PyPI on `v*` tag push (Trusted Publishing OIDC)
 - [ ] Additional presets: `plan_review.yaml`, `debug.yaml`
 - [ ] `speaker_chooses` turn order (agent picks who replies next)
 - [ ] Additional stop conditions: `file_exists`, custom regex
-- [ ] Examples directory with real transcripts (`x_news_debug.md`, `api_design.md`)
+- [ ] Real captured-transcript examples (replace synthetic ones from v0.1.0)
 - [ ] Full docs site (installation, configuration, adding_new_agents)
 - [ ] Promotion: r/LocalLLaMA, r/ClaudeAI, r/ChatGPTCoding, Show HN, X/Twitter
+- [ ] Async adapter variant + per-token streaming output
+- [ ] Mid-run resume from existing transcript
 
 ### Out of Scope
 
@@ -79,14 +85,14 @@ If everything else fails, this single command must work end-to-end with a real t
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Name: `ultra-claude` (not roundtable/consilium/triadic) | User preference; brand-aligned with Claude-centric workflow | — Pending |
-| CLI binary: `ultra-claude` (not short alias `uc` or `ultra`) | Discoverability over brevity. Short aliases can be added in v2 if requested. | — Pending |
-| v1 = Lean MVP, defer GH Actions + auto-publish to v2 | Ship the core value (agents debating end-to-end) first. CI/CD is leverage on top of a working tool, not a prerequisite. | — Pending |
-| Subprocess-based, not API-key-based | The whole point. Differentiates from every existing multi-agent framework. | — Pending |
-| Round-robin turn order in v1 (not `speaker_chooses`) | Simpler to reason about, deterministic, easier to test. `speaker_chooses` adds dispatch logic complexity. | — Pending |
-| `subprocess.run` (blocking), not async | Each turn is a discrete LLM call. No streaming UI in v1 means no benefit from async. | — Pending |
-| YAML + Pydantic for config | YAML is what users expect for this kind of tool; Pydantic gives free validation with good errors. | — Pending |
-| MIT license | Permissive license maximizes adoption and PR contributions. | — Pending |
+| Name: `ultra-claude` (not roundtable/consilium/triadic) | User preference; brand-aligned with Claude-centric workflow | ✓ Validated v0.1.0 |
+| CLI binary: `ultra-claude` (not short alias `uc` or `ultra`) | Discoverability over brevity. Short aliases can be added in v2 if requested. | ✓ Validated v0.1.0 |
+| v1 = Lean MVP, defer GH Actions + auto-publish to v2 | Ship the core value (agents debating end-to-end) first. CI/CD is leverage on top of a working tool, not a prerequisite. | ✓ Validated v0.1.0 |
+| Subprocess-based, not API-key-based | The whole point. Differentiates from every existing multi-agent framework. | ✓ Validated v0.1.0 |
+| Round-robin turn order in v1 (not `speaker_chooses`) | Simpler to reason about, deterministic, easier to test. `speaker_chooses` adds dispatch logic complexity. | ✓ Validated v0.1.0 |
+| `subprocess.run` (blocking), not async | Each turn is a discrete LLM call. No streaming UI in v1 means no benefit from async. | ✓ Validated v0.1.0 |
+| YAML + Pydantic for config | YAML is what users expect for this kind of tool; Pydantic gives free validation with good errors. | ✓ Validated v0.1.0 |
+| MIT license | Permissive license maximizes adoption and PR contributions. | ✓ Validated v0.1.0 |
 
 ## Evolution
 
@@ -106,4 +112,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-02 after initialization*
+*Last updated: 2026-05-02 after v0.1.0 milestone complete.*
