@@ -1,0 +1,107 @@
+[build-system]
+requires = ["hatchling>=1.29"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ultra-claude"
+description = "Orchestrate Claude Code, Gemini CLI, and Codex CLI in a multi-agent debate using existing CLI logins. No API keys."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Freddy Chiu" },
+]
+keywords = [
+    "claude",
+    "gemini",
+    "codex",
+    "cli",
+    "multi-agent",
+    "llm",
+    "subprocess",
+    "orchestrator",
+]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+dynamic = ["version"]
+dependencies = [
+    "click>=8.3.3",
+    "pydantic>=2.13.3",
+    "pyyaml>=6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.13",
+    "mypy>=1.18",
+    "pytest>=8.4",
+    "pytest-mock>=3.15",
+    "pytest-cov>=6.0",
+    "pytest-subprocess>=1.5",
+    "types-PyYAML",
+    "build>=1.2",
+    "twine>=5.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/frefrechiu/ultra-claude"
+Repository = "https://github.com/frefrechiu/ultra-claude.git"
+Issues = "https://github.com/frefrechiu/ultra-claude/issues"
+Changelog = "https://github.com/frefrechiu/ultra-claude/blob/main/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "src/ultra_claude/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ultra_claude"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/ultra_claude",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "pyproject.toml",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unused_ignores = true
+warn_return_any = true
+files = ["src/ultra_claude"]
+
+[tool.pytest.ini_options]
+minversion = "8.4"
+testpaths = ["tests"]
+addopts = "-ra"
