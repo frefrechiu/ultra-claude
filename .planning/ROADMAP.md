@@ -46,7 +46,9 @@
   2. Each `agent` entry requires `name`, `role`, `adapter` (Literal `claude`/`gemini`/`codex`), and `system_prompt` — omitting any of these produces a Pydantic error pointing at the offending field
   3. Omitting `max_turns` defaults to `12`; omitting `stop_keywords` defaults to `["AGREED", "DONE"]`; setting `turn_order` to anything other than `round_robin` is rejected at validation time
   4. Invalid YAML syntax or invalid config types produce a single human-readable error message that names the field path (e.g. `agents[0].adapter: invalid value 'clade'`), not a Python stack trace
-**Plans**: TBD
+**Plans:** 2 plans
+- [ ] 02-01-PLAN.md — Add `src/ultra_claude/exceptions.py` with `ConfigError` (exception class shared with future Phase 4 adapters; supports CFG-03)
+- [ ] 02-02-PLAN.md — Add `src/ultra_claude/config.py` (`AgentConfig`, `RoundtableConfig`, `load_config`, `format_validation_error`) plus `tests/test_config.py` covering all 6 CONTEXT.md cases (CFG-01..CFG-05)
 **UI hint**: no
 
 ### Phase 3: Transcript Module
@@ -171,7 +173,7 @@ Phases 1, 8, and 9 are strict serialization points — they cannot run in parall
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Project Skeleton & PyPI Name Reservation | 3/3 | Autonomous portion complete; PKG-05 awaits user `twine upload` per PUBLISH.md | - (closes when user reports "uploaded") |
-| 2. Config Schema & YAML Loader | 0/0 | Not started (unblocked) | - |
+| 2. Config Schema & YAML Loader | 0/2 | Plans landed (02-01, 02-02); ready for `/gsd-execute-phase 2` | - |
 | 3. Transcript Module | 0/0 | Not started | - |
 | 4. Adapter Protocol & ClaudeAdapter | 0/0 | Not started | - |
 | 5. Stop Conditions | 0/0 | Not started | - |
@@ -200,7 +202,8 @@ All 58 v1 requirements mapped to exactly one phase. No orphans, no duplicates.
 
 ---
 *Roadmap created: 2026-05-02 from PROJECT.md + REQUIREMENTS.md + research/*
-*Last updated: 2026-05-02 after Phase 1 plan 01-03 autonomous completion (3/3 plans done; PKG-05 deferred to user)*
+*Last updated: 2026-05-02 after Phase 2 plan decomposition (02-01, 02-02 landed; CFG-01..CFG-05 mapped to executable plans)*
 *Plan 01-01 completed: 2026-05-02 (commits 562d05e, 2b15b36)*
 *Plan 01-02 completed: 2026-05-02 (commit b9bf3c5)*
 *Plan 01-03 completed (autonomous portion): 2026-05-02 (commits 3e31832, e96ccb6); user-action twine upload pending per PUBLISH.md*
+*Phase 2 planned: 2026-05-02 (02-01-PLAN.md, 02-02-PLAN.md committed; ready for execution)*
