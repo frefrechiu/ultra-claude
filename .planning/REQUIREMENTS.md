@@ -90,7 +90,8 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 
 - [x] **PRE-01
 **: A bundled `presets/debate.yaml` ships in the package with three agents (architect: claude, critic: gemini, implementer: codex) and is loadable via `--preset debate`
-- [ ] **PRE-02**: An `examples/` directory in the repo contains at least one real captured transcript (e.g. fixing a failing test) with the YAML config alongside it
+- [x] **PRE-02
+**: An `examples/` directory in the repo contains at least one real captured transcript (e.g. fixing a failing test) with the YAML config alongside it
 
 ### Testing & CI
 
@@ -104,8 +105,10 @@ Requirements for initial PyPI release (`v0.1.0`). Each maps to roadmap phases.
 
 ### Documentation
 
-- [ ] **DOC-01**: `README.md` opens with a one-line pitch, a GIF placeholder block (final GIF lands as part of release), a 3-command quickstart, a "why this exists" section, a config example, and a short "extending to new CLIs" pointing at the `Adapter` Protocol
-- [ ] **DOC-02**: `CONTRIBUTING.md` documents dev setup, how to add an adapter, and the v1 policy that core ships only the three bundled adapters (third-party adapters live in their own packages)
+- [x] **DOC-01
+**: `README.md` opens with a one-line pitch, a GIF placeholder block (final GIF lands as part of release), a 3-command quickstart, a "why this exists" section, a config example, and a short "extending to new CLIs" pointing at the `Adapter` Protocol
+- [x] **DOC-02
+**: `CONTRIBUTING.md` documents dev setup, how to add an adapter, and the v1 policy that core ships only the three bundled adapters (third-party adapters live in their own packages)
 
 ## v2 Requirements
 
@@ -225,7 +228,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLI-10 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; ConfigError -> ctx.exit(2); AdapterError (incl. AdapterAuthError subclass) -> ctx.exit(1); test_config_error_exits_with_code_two verifies exit 2 path; test_adapter_error_with_abort_on_error_exits_with_code_one verifies exit 1 path via FakeAdapter raising AdapterError on every invoke + --abort-on-error flag) |
 | CLI-11 | Phase 8 | Complete (2026-05-02, plan 08-02 commit f452152 + plan 08-03 commit 4ada905; TTY-aware logging via `_configure_logging` sets `ultra_claude.orchestrator` logger to INFO when BOTH stdout AND stderr are ttys, WARNING otherwise; test_stdout_only_contains_transcript_path_on_success verifies `result.stdout.strip() == str(output)` AND `str(output) not in result.stderr` using click 8.3+'s default-split semantics) |
 | PRE-01 | Phase 8 | Complete (2026-05-02, plan 08-01 commits 481c8e9 + 7331fc7 — bundled `src/ultra_claude/presets/debate.yaml` reachable via `importlib.resources.files('ultra_claude.presets')`; verified by plan 08-03 commit 4ada905 — test_run_with_preset_debate_loads_bundled_yaml asserts CliRunner can run `--preset debate` from any cwd without a local YAML and the output contains all 3 agent names + all 3 adapter literals) |
-| PRE-02 | Phase 9 | Pending |
+| PRE-02 | Phase 9 | Complete (2026-05-02, plan 09-03 commit `2ab93b7` -- `examples/` directory populated with `README.md` (1771 bytes / 24 lines, orientation + synthetic-vs-real explanation), `debate.yaml` (1033 bytes / 30 lines, byte-identical to `src/ultra_claude/presets/debate.yaml`; T-09-12 mitigation), `transcripts/sample-debate.md` (2857 bytes / 63 lines, synthetic 3-turn debate with the TRX-02 markdown sentinel format `<!-- turn:N agent:Name -->` for turns 1/Architect, 2/Critic, 3/Implementer), `transcripts/sample-debate.md.jsonl` (3096 bytes / 3 lines, 3-record sidecar each validating against the actual `TurnRecord` Pydantic schema with 64-char lowercase-hex `prompt_hash`); all 4 files LF-only + ASCII-only on disk and in staged blobs despite `core.autocrlf=true`; `load_config('examples/debate.yaml')` succeeds returning 3 agents / max_turns=9 / stop_keywords=['AGREED', 'SHIP IT']) |
 | TST-01 | Phase 9 | Pending |
 | TST-02 | Phase 9 | Pending |
 | TST-03 | Phase 9 | Complete (2026-05-02, plan 09-02 commit 58ec2f8 -- `tests/fixtures/echo_cli.py` fake-CLI script reading stdin and printing `echo: <prompt>` to stdout, exits 0; UTF-8 reconfigure on stdin AND stdout to defend against Windows cp1252 default; verified standalone via `python tests/fixtures/echo_cli.py < input` -> `echo: <input>`) |
@@ -233,8 +236,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TST-05 | Phase 4 | Complete (plan 04-03 commit e16c4f9 — `tests/test_subprocess_lint.py` ast-walks every .py file under `src/ultra_claude/`, detects both `subprocess.run`/`subprocess.Popen` attribute access AND bare-imported `run`/`Popen`, asserts each call has `text=True`/`encoding="utf-8"`/`errors="replace"` and does NOT have `shell=True`. Aggregates ALL violations into a single multi-line `pytest.fail(...)` listing every `file:lineno`. Manual paranoia check confirmed the lint test FIRES on synthetic bad scratch files: `subprocess.run(["echo","hi"])` -> 3 missing-keyword violations, and `subprocess.run([...], shell=True)` -> "shell=True is forbidden" violation; scratch files deleted after.) |
 | TST-06 | Phase 9 | Pending |
 | TST-07 | Phase 9 | Pending |
-| DOC-01 | Phase 9 | Pending |
-| DOC-02 | Phase 9 | Pending |
+| DOC-01 | Phase 9 | Complete (2026-05-02, plan 09-03 commit `078dc7c` -- README.md replaced from 12-line stub with full v0.1.0 README (6313 bytes / 130 lines, LF-only, ASCII-only); 7 required sections in order: 1-line pitch under H1, GIF placeholder block, 3-command Quickstart (`pip install` + `doctor` + `run --preset debate --inline ...`) with per-CLI install/login table, "Why this exists" 3-bullet value prop, "Config example" embedding `presets/debate.yaml` verbatim with field-reference table, "Extending to new CLIs" with 10-line `MyAdapter(_SubprocessAdapterMixin)` example pointing at the `Adapter` Protocol, "Trademark disclaimer" naming Anthropic/Google/OpenAI; PyPI/GitHub/License/Changelog/Contributing links; staged blob LF-only despite `core.autocrlf=true`) |
+| DOC-02 | Phase 9 | Complete (2026-05-02, plan 09-03 commit `180be45` -- `CONTRIBUTING.md` created (5608 bytes / 92 lines, LF-only, ASCII-only); 6+ required sections: Dev setup (clone -> venv -> `pip install -e ".[dev]"` -> pytest), Adding an adapter (minimal `_SubprocessAdapterMixin` subclass example + 5-bullet contract list: stdin pipe / encoding+errors=replace / timeout+process-tree-kill / empty-stdout defense citing openai/codex#19945 / auth-marker detection), v1 policy (core ships only claude/gemini/codex; third-party adapters live in their own packages; rationale in 3 bullets), PR checklist (pytest + mypy + ruff + REQUIREMENTS.md update + README sync + conventional-commit message style), Filing an issue (5-item bug report template), Architecture corrections from original spec (3 documented deltas), Code of Conduct; staged blob LF-only despite `core.autocrlf=true`) |
 
 **Coverage:**
 - v1 requirements: 58 total
