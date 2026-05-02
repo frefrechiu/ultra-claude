@@ -35,7 +35,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from .exceptions import ConfigError
 
-__all__ = [
+__all__ = [  # noqa: RUF022 -- chronological-by-introduction (AgentConfig and RoundtableConfig before helpers; ConfigError last as a re-export) to match the conventions in stop_conditions.py / adapters/__init__.py / exceptions.py
     "AgentConfig",
     "RoundtableConfig",
     "load_config",
@@ -107,7 +107,7 @@ class RoundtableConfig(BaseModel):
     )
 
     @classmethod
-    def from_yaml_string(cls, source: str) -> "RoundtableConfig":
+    def from_yaml_string(cls, source: str) -> RoundtableConfig:
         """Parse a YAML string and return a validated config.
 
         Used by tests and by the future ``--inline`` CLI flag. Raises

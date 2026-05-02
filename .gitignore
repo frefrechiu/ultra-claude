@@ -53,6 +53,7 @@ cover/
 .env
 .venv
 .smoke-venv/
+.smoke-venv-*/
 env/
 venv/
 ENV/

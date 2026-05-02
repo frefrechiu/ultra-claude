@@ -21,10 +21,8 @@ from ultra_claude.config import (
     AgentConfig,
     ConfigError,
     RoundtableConfig,
-    format_validation_error,
     load_config,
 )
-
 
 # ---------------------------------------------------------------------------
 # Test fixtures (inline YAML strings)
